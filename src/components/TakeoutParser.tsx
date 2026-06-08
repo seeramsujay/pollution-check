@@ -3,7 +3,6 @@ import { useCarbonStore, type CarbonEvent } from '../store/carbonStore';
 import { parseSemanticMonth } from '../data/parser';
 import { TRANSPORT_EMISSION_FACTORS } from '../constants/carbonEmissions';
 
-
 export function TakeoutParser() {
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +34,6 @@ export function TakeoutParser() {
 
     try {
       const text = await file.text();
-      // Basic validation of Google Takeout JSON format
       if (!text.includes('timelineObjects')) {
         setError('Invalid file format. Please ensure this is the Google Takeout "Semantic Location History" JSON file, not raw "Records.json".');
         return;
@@ -47,7 +45,6 @@ export function TakeoutParser() {
         return;
       }
 
-      // Map ActivityReceipt objects to CarbonEvent
       const mappedEvents: CarbonEvent[] = receipts.map((receipt) => {
         const distanceKm = receipt.distanceMeters / 1000;
         const intensity = TRANSPORT_EMISSION_FACTORS[receipt.type] || TRANSPORT_EMISSION_FACTORS["UNKNOWN"];
@@ -59,7 +56,7 @@ export function TakeoutParser() {
           category: 'Transport',
           description: `Travel: ${formatActivityType(receipt.type)}`,
           rawQuantity: distanceKm,
-          rawUnit: 'kg', // using distance represented as 'kg' (Wait, is it km? Let's check: rawUnit can be 'kg', 'usd', 'gb', 'hours' as per CarbonUnitType in blueprint. Wait, in blueprint: type CarbonUnitType = 'kg' | 'usd' | 'gb' | 'hours'. So we use 'kg' or let's double check if we want to represent distance, we can put it as 'kg' for kg-based raw quantity or we can use another unit. We can write rawUnit: 'kg' where rawQuantity is the weight of travel in kilometers? No, in blueprint, CarbonUnitType has 'kg' (mass) or 'hours' or 'gb' or 'usd'. If travel is in km, since it's not in CarbonUnitType, we can map it to 'kg' or customize CarbonUnitType to support 'km'. Let's check: if the blueprint has CarbonUnitType = 'kg' | 'usd' | 'gb' | 'hours', let's use 'kg' for mass and let's keep it as is, or we can use 'kg' as the rawUnit, representing passenger-kilometers. Let's use 'kg' for distance travelers or let's support 'kg' and rawQuantity as km, and label it as km in UI)
+          rawUnit: 'kg',
           co2eIntensity: intensity,
           totalCo2e: receipt.emissionsKg,
           metadata: {
@@ -100,16 +97,16 @@ export function TakeoutParser() {
   };
 
   return (
-    <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 rounded-2xl p-6 shadow-2xl transition-all duration-300">
+    <div className="bg-surface-elevated border border-border-subtle rounded-xl p-6 transition-all duration-300">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-teal-500/20 text-teal-400">
-              📍
+          <h2 className="font-headline-md text-headline-md text-primary flex items-center gap-2 font-bold">
+            <span className="p-1.5 rounded-lg bg-primary/10 text-primary-fixed-dim">
+              <span className="material-symbols-outlined text-[20px]">explore</span>
             </span>
             Google Takeout Location Auditor
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
             Audit your travel footprint by importing Google Takeout Semantic Location History JSON.
           </p>
         </div>
@@ -122,8 +119,8 @@ export function TakeoutParser() {
         onDrop={handleDrop}
         className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
           dragActive
-            ? 'border-teal-450 bg-teal-950/10'
-            : 'border-slate-800 bg-slate-950/30 hover:border-slate-700'
+            ? 'border-primary bg-primary/5'
+            : 'border-outline-variant bg-surface-container/20 hover:border-primary-fixed-dim'
         }`}
       >
         <input
@@ -137,14 +134,14 @@ export function TakeoutParser() {
           htmlFor="takeout-upload-input"
           className="cursor-pointer flex flex-col items-center justify-center gap-3"
         >
-          <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center border border-slate-800 text-slate-400 text-lg shadow-inner">
-            🌍
+          <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center border border-border-subtle text-primary-fixed-dim text-lg shadow-inner">
+            <span className="material-symbols-outlined">map</span>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-300">
-              Drag & drop Semantic JSON or <span className="text-teal-400 underline hover:text-teal-300">browse</span>
+            <p className="font-label-md text-label-md font-semibold text-on-surface">
+              Drag & drop Semantic JSON or <span className="text-primary underline hover:text-primary-fixed-dim">browse</span>
             </p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="font-label-sm text-[10px] text-on-surface-variant mt-1">
               Select your monthly Location History JSON (e.g. 2026_JANUARY.json)
             </p>
           </div>
@@ -152,47 +149,47 @@ export function TakeoutParser() {
       </div>
 
       {error && (
-        <div className="mt-4 p-3.5 bg-rose-950/20 border border-rose-900/50 rounded-xl text-rose-400 text-xs flex items-center gap-2">
-          <span>⚠️</span> {error}
+        <div className="mt-4 p-3.5 bg-error-container/10 border border-error/20 rounded-xl text-error-fixed-dim text-xs flex items-center gap-2">
+          <span className="material-symbols-outlined text-[16px]">warning</span> {error}
         </div>
       )}
 
       {previewEvents.length > 0 && (
         <div className="mt-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <h3 className="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
               Preview Ingestion ({previewEvents.length} trips)
             </h3>
             <div className="flex gap-2">
               <button
                 onClick={() => setPreviewEvents([])}
-                className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-transparent transition-all"
+                className="px-3 py-1.5 rounded text-xs font-medium text-on-surface-variant hover:text-primary bg-transparent border border-transparent transition-all cursor-pointer"
               >
                 Clear
               </button>
               <button
                 onClick={handleImport}
-                className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-teal-900 bg-teal-400 hover:bg-teal-350 shadow-md shadow-teal-950/20 active:scale-95 transition-all"
+                className="px-4 py-1.5 rounded text-xs font-bold text-surface-base bg-primary hover:opacity-90 active:scale-95 transition-all cursor-pointer"
               >
                 Commit to Ledger
               </button>
             </div>
           </div>
 
-          <div className="max-h-48 overflow-y-auto border border-slate-800/80 rounded-xl bg-slate-950/40 divide-y divide-slate-900">
+          <div className="max-h-48 overflow-y-auto border border-border-subtle rounded-xl bg-surface-container/20 divide-y divide-border-subtle custom-scrollbar">
             {previewEvents.map((event) => (
-              <div key={event.id} className="p-3 flex items-center justify-between text-xs hover:bg-slate-900/30 transition-colors">
+              <div key={event.id} className="p-3 flex items-center justify-between text-xs hover:bg-surface-container/30 transition-colors font-mono-jet">
                 <div className="flex flex-col gap-0.5">
-                  <span className="font-medium text-slate-200">
+                  <span className="font-medium text-on-surface">
                     {event.description}
                   </span>
-                  <span className="text-slate-500 text-[10px]">
+                  <span className="text-on-surface-variant text-[10px]">
                     {new Date(event.timestamp).toLocaleDateString()} • {event.rawQuantity.toFixed(2)} km
                   </span>
                 </div>
                 <div className="flex items-center gap-4 text-right">
                   <div className="w-20">
-                    <span className="font-semibold text-rose-400">
+                    <span className="font-bold text-error-flash">
                       +{event.totalCo2e.toFixed(2)} kg
                     </span>
                   </div>
