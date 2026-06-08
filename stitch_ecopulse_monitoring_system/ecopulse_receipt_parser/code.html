@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoPulse Auditor | Receipt Parser</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;family=Azeret+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @keyframes pulse-dot {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pulse-dot {
+            animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #3b494b;
+            border-radius: 10px;
+        }
+        .mono-table {
+            font-family: 'Azeret Mono', monospace;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#231b00",
+                      "tertiary-fixed": "#ffe179",
+                      "on-primary-container": "#006970",
+                      "outline-variant": "#3b494b",
+                      "on-tertiary": "#3b2f00",
+                      "on-background": "#dce4e5",
+                      "surface-dim": "#0d1515",
+                      "primary": "#dbfcff",
+                      "outline": "#849495",
+                      "error": "#ffb4ab",
+                      "on-error-container": "#ffdad6",
+                      "error-flash": "#FF3131",
+                      "inverse-primary": "#006970",
+                      "on-surface": "#dce4e5",
+                      "surface-container-highest": "#2e3637",
+                      "primary-fixed-dim": "#00dbe9",
+                      "surface-base": "#0A0A0B",
+                      "on-tertiary-container": "#715d00",
+                      "surface-container": "#192122",
+                      "surface-container-low": "#151d1e",
+                      "inverse-surface": "#dce4e5",
+                      "surface-variant": "#2e3637",
+                      "on-secondary": "#3c0090",
+                      "error-container": "#93000a",
+                      "on-error": "#690005",
+                      "on-primary-fixed": "#002022",
+                      "primary-container": "#00f0ff",
+                      "primary-fixed": "#7df4ff",
+                      "surface-bright": "#333b3b",
+                      "tertiary": "#fff5de",
+                      "surface-container-high": "#232b2c",
+                      "on-primary": "#00363a",
+                      "surface": "#0d1515",
+                      "secondary-fixed": "#e9ddff",
+                      "success-neon": "#39FF14",
+                      "border-subtle": "#262629",
+                      "on-tertiary-fixed-variant": "#554500",
+                      "surface-container-lowest": "#080f10",
+                      "on-primary-fixed-variant": "#004f54",
+                      "secondary-fixed-dim": "#d1bcff",
+                      "background": "#0d1515",
+                      "secondary-container": "#7000ff",
+                      "tertiary-container": "#fed639",
+                      "on-secondary-fixed-variant": "#5700c9",
+                      "surface-tint": "#00dbe9",
+                      "surface-elevated": "#141416",
+                      "on-secondary-fixed": "#23005b",
+                      "secondary": "#d1bcff",
+                      "tertiary-fixed-dim": "#eac324",
+                      "inverse-on-surface": "#2a3233",
+                      "on-secondary-container": "#ddcdff",
+                      "on-surface-variant": "#b9cacb"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter-mobile": "16px",
+                      "gutter-desktop": "24px",
+                      "margin-desktop": "48px",
+                      "container-max": "1440px",
+                      "margin-mobile": "20px",
+                      "unit": "4px"
+              },
+              "fontFamily": {
+                      "label-md": ["JetBrains Mono"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Sora"],
+                      "body-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-md": ["Sora"],
+                      "label-sm": ["JetBrains Mono"]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface-base text-on-surface flex flex-col min-h-screen overflow-hidden">
+<!-- TopNavBar -->
+<nav class="bg-surface text-primary flex justify-between items-center w-full px-gutter-desktop h-16 border-b border-border-subtle z-50">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary">EcoPulse</span>
+<div class="hidden md:flex gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Sustainability Reports</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Methodology</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary-fixed-dim">dark_mode</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary-fixed-dim">notifications</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">person</span>
+</div>
+</div>
+</nav>
+<div class="flex flex-1 overflow-hidden">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 bottom-0 flex flex-col py-6 z-40 bg-surface-container border-r border-border-subtle w-[240px] hidden md:flex">
+<div class="px-6 mb-8 mt-16">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container">query_stats</span>
+</div>
+<div>
+<p class="font-headline-md text-[16px] font-bold text-primary leading-tight">EcoPulse Auditor</p>
+<p class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-widest">Daily Budget Status</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-primary bg-surface-container-high border-r-2 border-primary transition-all scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-label-md text-label-md">Breakdown</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">directions_run</span>
+<span class="font-label-md text-label-md">Travel</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-label-md text-label-md">Food</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Finance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">History</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full bg-primary-container text-on-primary-container py-3 rounded-lg font-label-md text-label-md font-bold hover:opacity-90 transition-opacity">
+                    Generate Report
+                </button>
+</div>
+</aside>
+<!-- Main Content (Canvas) -->
+<main class="flex-1 md:ml-[240px] flex flex-col bg-surface-base">
+<!-- Breadcrumbs / Actions -->
+<div class="h-12 px-gutter-desktop border-b border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-on-surface-variant">Breakdown</span>
+<span class="material-symbols-outlined text-sm text-outline">chevron_right</span>
+<span class="font-label-sm text-primary">Receipt Parser</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-label-sm text-success-neon flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-success-neon animate-pulse-dot"></span>
+                        AI Engine: Processing
+                    </span>
+</div>
+</div>
+<!-- Split Panel Container -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Left: Uploaded Receipt Image (Desaturated) -->
+<div class="w-1/2 h-full border-r border-border-subtle relative bg-surface-container-lowest flex items-center justify-center p-8">
+<div class="relative w-full max-w-md shadow-2xl overflow-hidden rounded border border-outline-variant">
+<img alt="Grocery receipt scan" class="w-full grayscale brightness-75 opacity-90 object-contain" data-alt="A detailed close-up of a long paper grocery receipt held against a dark, tech-oriented background. The receipt is rendered in high-contrast black and white, appearing desaturated to fit the modern UI aesthetic. Subtle digital artifacts and scan lines are visible, suggesting a high-tech optical character recognition process. The lighting is focused and dramatic, highlighting the texture of the thermal paper and the sharp printed text of the line items." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRr-Wsb7VWVQm1vZwsHjWxGHTouMEed6jpuXGZfS8fYoYaC00cRB6p8KQ2WjkGToG6GalXN5qnB8i-AfaxYGe3KPFN7S6pCHMANOU4d5WeVe541S1EdSuI5Bx0e2aKBXQN6cal1J4EbAkDycksCnYZQ4VhvbsQXQw7CGxTkLjaYSBhzVzwrArQmuuNMwmxjXDpHAkkgEaaZTpZIQdGxAGcJf7BUyU2uFYf7ziW9QwHA1VD2ZREQZ_83TV9nK4z_GdWx3n-CFMZTyo9"/>
+<!-- Scanning Overlay Effect -->
+<div class="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent opacity-30 h-1/4 animate-[scan_4s_linear_infinite]" id="scanner-line"></div>
+<style>
+                            @keyframes scan {
+                                0% { top: 0; }
+                                100% { top: 100%; }
+                            }
+                        </style>
+</div>
+<!-- Floating Annotation Labels (Simulating AI detection) -->
+<div class="absolute top-1/4 left-1/4 bg-primary text-on-primary-fixed px-2 py-0.5 font-label-sm text-[10px] rounded pointer-events-none">ORGANIC_KALE</div>
+<div class="absolute top-[45%] right-1/4 bg-primary text-on-primary-fixed px-2 py-0.5 font-label-sm text-[10px] rounded pointer-events-none">LOCAL_POULTRY</div>
+</div>
+<!-- Right: Live Parsing Column -->
+<div class="w-1/2 h-full flex flex-col bg-surface-container-low">
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6">
+<table class="w-full mono-table text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant">
+<th class="py-3 font-label-sm text-on-surface-variant uppercase tracking-wider text-[11px]">Item Name</th>
+<th class="py-3 font-label-sm text-on-surface-variant uppercase tracking-wider text-[11px]">Category</th>
+<th class="py-3 font-label-sm text-on-surface-variant uppercase tracking-wider text-[11px] text-right">CO₂e (kg)</th>
+</tr>
+</thead>
+<tbody class="text-[13px] text-on-surface">
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition-colors">
+<td class="py-4">Organic Kale (Large)</td>
+<td class="py-4 text-on-surface-variant">Produce</td>
+<td class="py-4 text-right text-success-neon">0.12</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition-colors">
+<td class="py-4">Almond Milk 1L</td>
+<td class="py-4 text-on-surface-variant">Dairy Alt</td>
+<td class="py-4 text-right text-success-neon">0.38</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition-colors">
+<td class="py-4">Free Range Eggs (12)</td>
+<td class="py-4 text-on-surface-variant">Poultry</td>
+<td class="py-4 text-right text-tertiary-fixed-dim">1.45</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition-colors">
+<td class="py-4">Premium Beef Mince</td>
+<td class="py-4 text-on-surface-variant">Meat</td>
+<td class="py-4 text-right text-error-flash">12.40</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition-colors">
+<td class="py-4">Recycled Paper Towels</td>
+<td class="py-4 text-on-surface-variant">Household</td>
+<td class="py-4 text-right text-success-neon">0.22</td>
+</tr>
+<tr class="border-b border-outline-variant/30 hover:bg-surface-container-high transition-colors group">
+<td class="py-4 italic text-on-surface-variant flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                                        Parsing Item 06...
+                                    </td>
+<td class="py-4">---</td>
+<td class="py-4 text-right">0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Analysis Bottom Panel -->
+<div class="p-6 bg-surface-container-highest border-t border-outline-variant">
+<div class="flex justify-between items-end mb-6">
+<div>
+<h3 class="font-headline-md text-[20px] font-bold text-primary mb-1">Receipt Summary</h3>
+<p class="font-label-sm text-on-surface-variant text-[12px]">Confidence: 94% · AR6 GWP100 factors</p>
+</div>
+<div class="text-right">
+<p class="font-label-sm text-on-surface-variant uppercase text-[10px]">Total Impact</p>
+<p class="font-headline-md text-headline-md font-bold text-primary">14.57 kg CO₂e</p>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 border border-primary text-primary hover:bg-primary/5 py-4 font-label-md text-label-md transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">edit_document</span>
+                                Manual Edit
+                            </button>
+<button class="flex-[1.5] bg-success-neon text-on-tertiary-fixed py-4 font-label-md text-label-md font-bold hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                                Add to today's ledger →
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Bottom Navigation Shell -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface border-t border-border-subtle flex items-center justify-around z-50">
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-label-sm">Home</span>
+</button>
+<button class="flex flex-col items-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="text-[10px] font-label-sm">Auditor</span>
+</button>
+<div class="-mt-8">
+<button class="w-12 h-12 bg-primary-container text-on-primary-container rounded-full shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined">history</span>
+<span class="text-[10px] font-label-sm">Log</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-label-sm">Setup</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for scanning effect or table updates
+        document.addEventListener('DOMContentLoaded', () => {
+            const scanLine = document.getElementById('scanner-line');
+            
+            // Randomly update the "Parsing Item" text to feel alive
+            const parsingText = document.querySelector('.italic.text-on-surface-variant');
+            const items = ['Local Butter 250g', 'Sparkling Water', 'Avocado Toast Box', 'Compostable Bags'];
+            let i = 0;
+            
+            setInterval(() => {
+                if(parsingText) {
+                    parsingText.childNodes[2].textContent = `Parsing ${items[i]}...`;
+                    i = (i + 1) % items.length;
+                }
+            }, 3000);
+        });
+    </script>
+</body></html>

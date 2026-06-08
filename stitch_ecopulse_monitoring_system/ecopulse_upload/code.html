@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoPulse Auditor | Real-time Sustainability Tracking</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500&amp;family=Azeret+Mono:wght@700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Sora:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#231b00",
+                        "tertiary-fixed": "#ffe179",
+                        "on-primary-container": "#006970",
+                        "outline-variant": "#3b494b",
+                        "on-tertiary": "#3b2f00",
+                        "on-background": "#dce4e5",
+                        "surface-dim": "#0d1515",
+                        "primary": "#dbfcff",
+                        "outline": "#849495",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6",
+                        "error-flash": "#FF3131",
+                        "inverse-primary": "#006970",
+                        "on-surface": "#dce4e5",
+                        "surface-container-highest": "#2e3637",
+                        "primary-fixed-dim": "#00dbe9",
+                        "surface-base": "#0A0A0B",
+                        "on-tertiary-container": "#715d00",
+                        "surface-container": "#192122",
+                        "surface-container-low": "#151d1e",
+                        "inverse-surface": "#dce4e5",
+                        "surface-variant": "#2e3637",
+                        "on-secondary": "#3c0090",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "on-primary-fixed": "#002022",
+                        "primary-container": "#00f0ff",
+                        "primary-fixed": "#7df4ff",
+                        "surface-bright": "#333b3b",
+                        "tertiary": "#fff5de",
+                        "surface-container-high": "#232b2c",
+                        "on-primary": "#00363a",
+                        "surface": "#0d1515",
+                        "secondary-fixed": "#e9ddff",
+                        "success-neon": "#39FF14",
+                        "border-subtle": "#262629",
+                        "on-tertiary-fixed-variant": "#554500",
+                        "surface-container-lowest": "#080f10",
+                        "on-primary-fixed-variant": "#004f54",
+                        "secondary-fixed-dim": "#d1bcff",
+                        "background": "#0d1515",
+                        "secondary-container": "#7000ff",
+                        "tertiary-container": "#fed639",
+                        "on-secondary-fixed-variant": "#5700c9",
+                        "surface-tint": "#00dbe9",
+                        "surface-elevated": "#141416",
+                        "on-secondary-fixed": "#23005b",
+                        "secondary": "#d1bcff",
+                        "tertiary-fixed-dim": "#eac324",
+                        "inverse-on-surface": "#2a3233",
+                        "on-secondary-container": "#ddcdff",
+                        "on-surface-variant": "#b9cacb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter-mobile": "16px",
+                        "gutter-desktop": "24px",
+                        "margin-desktop": "48px",
+                        "container-max": "1440px",
+                        "margin-mobile": "20px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["JetBrains Mono"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Sora"],
+                        "headline-xl": ["Sora"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Sora"],
+                        "label-sm": ["JetBrains Mono"],
+                        "azeret": ["Azeret Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #060908;
+            color: #dce4e5;
+            -webkit-font-smoothing: antialiased;
+        }
+        .upload-dashed {
+            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%233b494b' stroke-width='2' stroke-dasharray='8%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+        }
+        .upload-dashed:hover {
+            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%2300dbe9' stroke-width='2' stroke-dasharray='8%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="flex justify-between items-center w-full px-gutter-desktop h-16 bg-surface dark:bg-surface border-b border-border-subtle dark:border-outline-variant fixed top-0 z-50">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">
+            EcoPulse
+        </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-label-md text-label-md text-primary dark:text-primary-fixed-dim border-b-2 border-primary transition-colors py-1" href="#">Sustainability Reports</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors py-1" href="#">Methodology</a>
+</div>
+<div class="flex items-center gap-4">
+<button aria-label="Dark Mode Toggle" class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+</button>
+<button aria-label="Notifications" class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</nav>
+<main class="pt-16 min-h-screen flex flex-col items-center justify-center max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
+<!-- Hero Hero Area -->
+<section class="w-full text-center py-12 md:py-20 flex flex-col items-center">
+<div class="mb-2">
+<span class="font-label-md text-label-md tracking-widest text-primary-fixed-dim uppercase">Daily CO₂e</span>
+</div>
+<div class="font-azeret text-[64px] md:text-[120px] leading-none tracking-tighter text-primary">
+                — kg CO₂e
+            </div>
+<p class="mt-6 max-w-xl text-on-surface-variant font-body-lg text-body-lg">
+                Upload your data to audit your daily environmental footprint with local, private processing.
+            </p>
+</section>
+<!-- Bento Upload Zones -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mb-20">
+<!-- Location History -->
+<div class="upload-dashed group transition-all duration-300 bg-surface-elevated/20 p-8 flex flex-col items-center justify-center text-center cursor-pointer min-h-[320px]">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-6 border border-border-subtle group-hover:border-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-primary-fixed-dim text-3xl" data-icon="location_on">location_on</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Location History</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6 px-4">
+                    Import JSON or Take-out data to calculate transport emissions.
+                </p>
+<button class="font-label-md text-label-md border border-primary text-primary px-6 py-2 hover:bg-primary hover:text-surface-base transition-all duration-200">
+                    Upload Dataset
+                </button>
+</div>
+<!-- Bank Statement -->
+<div class="upload-dashed group transition-all duration-300 bg-surface-elevated/20 p-8 flex flex-col items-center justify-center text-center cursor-pointer min-h-[320px]">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-6 border border-border-subtle group-hover:border-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-primary-fixed-dim text-3xl" data-icon="account_balance">account_balance</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Bank Statement</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6 px-4">
+                    CSV or PDF import. Automatic merchant categorization for indirect impact.
+                </p>
+<button class="font-label-md text-label-md border border-primary text-primary px-6 py-2 hover:bg-primary hover:text-surface-base transition-all duration-200">
+                    Select File
+                </button>
+</div>
+<!-- Receipt Photo -->
+<div class="upload-dashed group transition-all duration-300 bg-surface-elevated/20 p-8 flex flex-col items-center justify-center text-center cursor-pointer min-h-[320px]">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-6 border border-border-subtle group-hover:border-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-primary-fixed-dim text-3xl" data-icon="receipt_long">receipt_long</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Receipt Photo</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6 px-4">
+                    Snap or drop individual receipts for itemized product analysis.
+                </p>
+<button class="font-label-md text-label-md border border-primary text-primary px-6 py-2 hover:bg-primary hover:text-surface-base transition-all duration-200">
+                    Scan Receipt
+                </button>
+</div>
+</section>
+<!-- Privacy Shield Visual -->
+<section class="w-full flex justify-center mb-20">
+<div class="relative w-full max-w-4xl h-64 rounded-xl overflow-hidden border border-border-subtle">
+<div class="absolute inset-0 bg-gradient-to-tr from-surface-container-highest/40 to-transparent"></div>
+<div class="relative z-10 p-10 flex flex-col md:flex-row items-center gap-8">
+<div class="hidden md:block">
+<div class="w-24 h-24 flex items-center justify-center rounded-full bg-primary-container/10 border border-primary-container/20">
+<span class="material-symbols-outlined text-primary-container text-4xl" data-icon="shield_lock" style="font-variation-settings: 'FILL' 1;">shield_lock</span>
+</div>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-2">Local Compute Engine</h2>
+<p class="text-on-surface-variant font-body-md max-w-2xl">
+                            Our proprietary Auditor engine leverages WebAssembly to run complex sustainability models directly in your browser. Sensitive PII never touches our servers.
+                        </p>
+</div>
+</div>
+<!-- Abstract BG Texture for the card -->
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-[160px]" data-icon="analytics">analytics</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 border-t border-border-subtle bg-surface-container-lowest">
+<div class="max-w-container-max mx-auto px-gutter-desktop flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-success-neon text-sm" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-label-md text-label-md text-on-surface-variant">All processing is local. Nothing leaves your device.</span>
+</div>
+<div class="flex gap-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary" href="#">Privacy Node</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary" href="#">Terms of Use</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary" href="#">Open Audit SDK</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple micro-interactions for the upload zones
+        document.querySelectorAll('.upload-dashed').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('scale-[1.01]');
+                zone.classList.add('bg-primary/5');
+            });
+            zone.addEventListener('dragleave', (e) => {
+                zone.classList.remove('scale-[1.01]');
+                zone.classList.remove('bg-primary/5');
+            });
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('scale-[1.01]');
+                zone.classList.remove('bg-primary/5');
+                const btn = zone.querySelector('button');
+                const originalText = btn.innerText;
+                btn.innerText = 'Analyzing...';
+                btn.classList.add('animate-pulse');
+                setTimeout(() => {
+                    btn.innerText = 'Analysis Complete';
+                    btn.classList.remove('animate-pulse');
+                    btn.classList.replace('text-primary', 'text-success-neon');
+                    btn.classList.replace('border-primary', 'border-success-neon');
+                }, 2000);
+            });
+        });
+    </script>
+</body></html>

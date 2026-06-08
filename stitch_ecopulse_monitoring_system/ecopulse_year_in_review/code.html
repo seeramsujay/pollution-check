@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EcoPulse | Your 2024 Carbon Ledger</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500&amp;family=Syne:wght@700&amp;family=Azeret+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#231b00",
+                    "tertiary-fixed": "#ffe179",
+                    "on-primary-container": "#006970",
+                    "outline-variant": "#3b494b",
+                    "on-tertiary": "#3b2f00",
+                    "on-background": "#dce4e5",
+                    "surface-dim": "#0d1515",
+                    "primary": "#dbfcff",
+                    "outline": "#849495",
+                    "error": "#ffb4ab",
+                    "on-error-container": "#ffdad6",
+                    "error-flash": "#FF3131",
+                    "inverse-primary": "#006970",
+                    "on-surface": "#dce4e5",
+                    "surface-container-highest": "#2e3637",
+                    "primary-fixed-dim": "#00dbe9",
+                    "surface-base": "#0A0A0B",
+                    "on-tertiary-container": "#715d00",
+                    "surface-container": "#192122",
+                    "surface-container-low": "#151d1e",
+                    "inverse-surface": "#dce4e5",
+                    "surface-variant": "#2e3637",
+                    "on-secondary": "#3c0090",
+                    "error-container": "#93000a",
+                    "on-error": "#690005",
+                    "on-primary-fixed": "#002022",
+                    "primary-container": "#00f0ff",
+                    "primary-fixed": "#7df4ff",
+                    "surface-bright": "#333b3b",
+                    "tertiary": "#fff5de",
+                    "surface-container-high": "#232b2c",
+                    "on-primary": "#00363a",
+                    "surface": "#0d1515",
+                    "secondary-fixed": "#e9ddff",
+                    "success-neon": "#39FF14",
+                    "border-subtle": "#262629",
+                    "on-tertiary-fixed-variant": "#554500",
+                    "surface-container-lowest": "#080f10",
+                    "on-primary-fixed-variant": "#004f54",
+                    "secondary-fixed-dim": "#d1bcff",
+                    "background": "#0d1515",
+                    "secondary-container": "#7000ff",
+                    "tertiary-container": "#fed639",
+                    "on-secondary-fixed-variant": "#5700c9",
+                    "surface-tint": "#00dbe9",
+                    "surface-elevated": "#141416",
+                    "on-secondary-fixed": "#23005b",
+                    "secondary": "#d1bcff",
+                    "tertiary-fixed-dim": "#eac324",
+                    "inverse-on-surface": "#2a3233",
+                    "on-secondary-container": "#ddcdff",
+                    "on-surface-variant": "#b9cacb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter-mobile": "16px",
+                    "gutter-desktop": "24px",
+                    "margin-desktop": "48px",
+                    "container-max": "1440px",
+                    "margin-mobile": "20px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "label-md": ["JetBrains Mono"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Sora"],
+                    "headline-xl": ["Sora"],
+                    "body-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Sora"],
+                    "label-sm": ["JetBrains Mono"],
+                    "syne": ["Syne"],
+                    "azeret": ["Azeret Mono"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0d1515;
+            color: #dce4e5;
+            -webkit-font-smoothing: antialiased;
+        }
+        .bento-card {
+            background-color: #141416;
+            border: 1px solid #262629;
+            transition: border-color 0.3s ease;
+        }
+        .bento-card:hover {
+            border-color: #00dbe9;
+        }
+        .bar-transition {
+            transition: height 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar (Authority: JSON) -->
+<aside class="fixed left-0 top-0 bottom-0 flex flex-col py-6 z-40 bg-surface-container dark:bg-surface-container border-r border-border-subtle dark:border-outline-variant w-[240px]">
+<div class="px-6 mb-10">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">EcoPulse</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">EcoPulse Auditor</p>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<!-- Active State: History (Closest match to Year in Review) -->
+<a class="flex items-center gap-3 px-3 py-3 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest hover:text-primary transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">dashboard</span>
+                Overview
+            </a>
+<a class="flex items-center gap-3 px-3 py-3 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest hover:text-primary transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">analytics</span>
+                Breakdown
+            </a>
+<a class="flex items-center gap-3 px-3 py-3 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest hover:text-primary transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">directions_run</span>
+                Travel
+            </a>
+<a class="flex items-center gap-3 px-3 py-3 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest hover:text-primary transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">restaurant</span>
+                Food
+            </a>
+<a class="flex items-center gap-3 px-3 py-3 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest hover:text-primary transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">payments</span>
+                Finance
+            </a>
+<!-- ACTIVE TAB -->
+<a class="flex items-center gap-3 px-3 py-3 font-label-md text-label-md text-primary dark:text-primary-fixed-dim bg-surface-container-high dark:bg-surface-container-highest border-r-2 border-primary group scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+                History
+            </a>
+</nav>
+<div class="px-6 pt-6 mt-auto border-t border-outline-variant">
+<button class="w-full py-3 bg-primary-container text-on-primary-container font-label-md text-label-md rounded-lg font-bold hover:opacity-80 transition-opacity">
+                Generate Report
+            </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-[240px] flex-1 p-margin-desktop bg-surface-base">
+<!-- TopNavBar (Authority: JSON) -->
+<header class="flex justify-between items-center w-full mb-12 h-16">
+<div class="flex items-center gap-8">
+<div class="flex gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Sustainability Reports</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Methodology</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer">dark_mode</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">notifications</span>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCMw_R3mDzTiXZvhOgnVv0XduXzOc4eMuH5OwtbXsvTKVklNoQgX0Pg6bShPG4BPwUHExFj_mYwN6kuPkD9HY_U-irBMs2-m58XMgJGM4kPnsQkBpwsxwOTAj4HxyiS1FAxp3nJwXM4je_39TAoRl_UOaFF_VvQrZrhVaT1tsvFal7rH4Yp8mDgGdLtHMOX5WGuUaUdpfc7CvAV33OQYUExvJU7uRRL35cCSK_J3zrH5Cxek8yqOUe-S-z9NfvpHw7Iw5DFovs78D1"/>
+</div>
+</div>
+</header>
+<!-- Headline -->
+<div class="mb-12">
+<h2 class="font-syne text-[56px] leading-[1] font-bold text-primary mb-2 uppercase tracking-tight">
+                Your 2024 Carbon Ledger
+            </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                A definitive audit of your ecological footprint across the last twelve fiscal months.
+            </p>
+</div>
+<!-- Dashboard Layout: Bento Grid -->
+<div class="grid grid-cols-12 gap-gutter-desktop auto-rows-[240px]">
+<!-- 12-Month Bar Chart -->
+<div class="col-span-12 lg:col-span-8 row-span-2 bento-card p-8 rounded-xl flex flex-col">
+<div class="flex justify-between items-center mb-10">
+<h3 class="font-headline-md text-headline-md text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">analytics</span>
+                        Monthly Intensity
+                    </h3>
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant">
+<span class="w-3 h-3 rounded-full bg-success-neon"></span> Target
+                        </span>
+<span class="flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant">
+<span class="w-3 h-3 rounded-full bg-error-flash"></span> Overdrive
+                        </span>
+</div>
+</div>
+<div class="flex-1 flex items-end justify-between gap-2 px-2">
+<!-- Bars: Green-to-Red based on height % -->
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-success-neon opacity-80 group-hover:opacity-100 rounded-t-sm" style="height: 45%;"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-3">JAN</p>
+</div>
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-[#8AFF33] opacity-80 group-hover:opacity-100 rounded-t-sm" style="height: 52%;"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-3">FEB</p>
+</div>
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-[#B2FF33] opacity-80 group-hover:opacity-100 rounded-t-sm" style="height: 58%;"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-3">MAR</p>
+</div>
+<div class="group relative flex-1 scale-110 -translate-y-2">
+<div class="bar-transition w-full bg-success-neon opacity-100 rounded-t-sm shadow-[0_0_15px_rgba(57,255,20,0.3)]" style="height: 38%;"></div>
+<p class="font-label-sm text-label-sm text-primary text-center mt-3 font-bold">APR</p>
+</div>
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-[#E0FF33] opacity-80 group-hover:opacity-100 rounded-t-sm" style="height: 65%;"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-3">MAY</p>
+</div>
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-[#FFF333] opacity-80 group-hover:opacity-100 rounded-t-sm" style="height: 72%;"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-3">JUN</p>
+</div>
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-[#FFD433] opacity-80 group-hover:opacity-100 rounded-t-sm" style="height: 80%;"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-3">JUL</p>
+</div>
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-[#FFAE33] opacity-80 group-hover:opacity-100 rounded-t-sm" style="height: 75%;"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-3">AUG</p>
+</div>
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-[#FF8833] opacity-80 group-hover:opacity-100 rounded-t-sm" style="height: 85%;"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-3">SEP</p>
+</div>
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-[#FF6233] opacity-80 group-hover:opacity-100 rounded-t-sm" style="height: 88%;"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-3">OCT</p>
+</div>
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-[#FF4533] opacity-80 group-hover:opacity-100 rounded-t-sm" style="height: 92%;"></div>
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center mt-3">NOV</p>
+</div>
+<div class="group relative flex-1">
+<div class="bar-transition w-full bg-error-flash opacity-100 rounded-t-sm shadow-[0_0_15px_rgba(255,49,49,0.3)]" style="height: 100%;"></div>
+<p class="font-label-sm text-label-sm text-error text-center mt-3 font-bold">DEC</p>
+</div>
+</div>
+</div>
+<!-- Best/Worst Badges -->
+<div class="col-span-12 lg:col-span-4 row-span-1 bento-card p-6 rounded-xl flex items-center justify-between border-l-4 border-l-success-neon">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-1">Optimal Period</span>
+<h4 class="font-headline-md text-headline-md text-success-neon">April 2024</h4>
+<p class="font-azeret text-[14px] text-on-surface-variant mt-2">Emission: <span class="text-success-neon">0.84t</span> CO2e</p>
+</div>
+<div class="bg-success-neon/10 p-4 rounded-full">
+<span class="material-symbols-outlined text-success-neon scale-150">eco</span>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-4 row-span-1 bento-card p-6 rounded-xl flex items-center justify-between border-l-4 border-l-error-flash">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-1">Intensity Peak</span>
+<h4 class="font-headline-md text-headline-md text-error-flash">December 2024</h4>
+<p class="font-azeret text-[14px] text-on-surface-variant mt-2">Emission: <span class="text-error-flash">4.12t</span> CO2e</p>
+</div>
+<div class="bg-error-flash/10 p-4 rounded-full">
+<span class="material-symbols-outlined text-error-flash scale-150">warning</span>
+</div>
+</div>
+<!-- Donut Chart & Category Breakdown -->
+<div class="col-span-12 lg:col-span-5 row-span-2 bento-card p-8 rounded-xl relative overflow-hidden">
+<h3 class="font-headline-md text-headline-md text-primary mb-8">Asset Allocation</h3>
+<div class="flex flex-col items-center">
+<!-- SVG Donut Placeholder -->
+<div class="relative w-64 h-64 mb-8">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-outline-variant" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+<!-- Travel (45%) -->
+<circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="45, 100" stroke-dashoffset="0" stroke-width="3"></circle>
+<!-- Food (25%) -->
+<circle class="stroke-secondary-container" cx="18" cy="18" fill="none" r="16" stroke-dasharray="25, 100" stroke-dashoffset="-45" stroke-width="3"></circle>
+<!-- Finance (20%) -->
+<circle class="stroke-tertiary-container" cx="18" cy="18" fill="none" r="16" stroke-dasharray="20, 100" stroke-dashoffset="-70" stroke-width="3"></circle>
+<!-- Others (10%) -->
+<circle class="stroke-on-surface-variant" cx="18" cy="18" fill="none" r="16" stroke-dasharray="10, 100" stroke-dashoffset="-90" stroke-width="3"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-azeret text-[32px] font-bold text-primary">12.4t</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Annual Total</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Travel</span>
+<span class="ml-auto font-azeret text-[12px] text-primary">45%</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-secondary-container"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Food</span>
+<span class="ml-auto font-azeret text-[12px] text-primary">25%</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary-container"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Finance</span>
+<span class="ml-auto font-azeret text-[12px] text-primary">20%</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-on-surface-variant"></div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Others</span>
+<span class="ml-auto font-azeret text-[12px] text-primary">10%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Insights / Micro-data -->
+<div class="col-span-12 lg:col-span-7 row-span-2 bento-card p-8 rounded-xl">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-primary">Comparative Audit</h3>
+<div class="px-3 py-1 bg-surface-container-highest rounded border border-outline-variant font-label-sm text-label-sm">vs. 2023 Baseline</div>
+</div>
+<div class="space-y-6">
+<div class="flex items-center gap-6 p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+<span class="material-symbols-outlined text-success-neon">trending_down</span>
+<div class="flex-1">
+<h5 class="font-body-md text-body-md font-bold">Flight Reduction</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Reduced short-haul travel by 4 trips.</p>
+</div>
+<div class="text-right">
+<p class="font-azeret text-[18px] text-success-neon font-bold">-2.1t</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Net Change</p>
+</div>
+</div>
+<div class="flex items-center gap-6 p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+<span class="material-symbols-outlined text-error-flash">trending_up</span>
+<div class="flex-1">
+<h5 class="font-body-md text-body-md font-bold">Data Consumption</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant">High-fidelity streaming and cloud compute.</p>
+</div>
+<div class="text-right">
+<p class="font-azeret text-[18px] text-error-flash font-bold">+0.4t</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Net Change</p>
+</div>
+</div>
+<div class="mt-8">
+<div class="relative w-full h-48 rounded-xl overflow-hidden grayscale contrast-125 opacity-40">
+<img alt="Sustainable Cityscape" class="w-full h-full object-cover" data-alt="A cinematic, wide-angle photograph of a futuristic green city at dusk. The architecture features soaring glass towers integrated with lush vertical forests and solar-panel facades. The lighting is moody with cool cyan and teal tones, punctuated by soft neon street lighting. The atmosphere is crisp, high-contrast, and embodies a technically advanced, sustainable urban future." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkahqxEOksBRQEEwwpDFnYHEcnObnkuj-frm0b-b0AQRYcbM5IhRlvrwmNWs6b506oamU7zL43EounU3Zh2kCgMoxFA9K8ozhTx2xgSHdW1vAdCjNg-lICcW6NK1JXnCzucttxY2mSU3rTXea62aV_UeWIZ4sJwWRdcLhlRQAKvj4PP1C5CklYOyHcejELCIIohHXPKTjR-o7YjPGIGXFzSN9qe45nFpstOLilZDO6xU6GPHa8KqXHFtIZhm1tA_J5hoMRU7Kaq0hi"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-elevated to-transparent"></div>
+</div>
+<div class="mt-4 flex justify-between items-center">
+<div>
+<h4 class="font-body-md text-body-md font-bold">Global Percentile</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">You are in the top 12% of sustainable auditors.</p>
+</div>
+<button class="px-6 py-2 border border-primary text-primary font-label-md text-label-md rounded hover:bg-primary/10 transition-colors">
+                                View Leaderboard
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interaction: Update values on hover
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Initialize Bar Chart Anims
+        window.addEventListener('load', () => {
+            const bars = document.querySelectorAll('.bar-transition');
+            bars.forEach((bar, index) => {
+                const targetHeight = bar.style.height;
+                bar.style.height = '0';
+                setTimeout(() => {
+                    bar.style.height = targetHeight;
+                }, index * 50);
+            });
+        });
+    </script>
+</body></html>
