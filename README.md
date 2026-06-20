@@ -81,19 +81,22 @@ pollution-check/
 
 ---
 
-## 🚀 Local Installation
+## 🚀 Local Installation & Testing
 
-Verify that you have Node.js installed, then run:
+Verify that you have Node.js and `pnpm` installed, then run:
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Start local dev server
-npm run dev
+pnpm run dev
+
+# Run unit tests (Vitest suite)
+pnpm run test
 
 # Build production bundle (<150KB gzipped limit)
-npm run build
+pnpm run build
 ```
 
 ---

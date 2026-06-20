@@ -41,9 +41,11 @@ export function parseFinancialCSV(csvText: string): CarbonEvent[] {
       matchedKey = MCC_MAPPING[rawMcc];  
     } else {  
       const lowerDesc = rawDesc.toLowerCase();  
+      const cleanDesc = lowerDesc.replace(/[^a-z0-9]/g, '');  
       const keys = Object.keys(FINANCIAL_CARBON_DICT);  
       for (let k = 0; k < keys.length; k++) {  
-        if (lowerDesc.includes(keys[k])) {  
+        const cleanKey = keys[k].replace(/[^a-z0-9]/g, '');  
+        if (cleanDesc.includes(cleanKey)) {  
           matchedKey = keys[k];  
           break;  
         }  
