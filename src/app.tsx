@@ -242,68 +242,131 @@ export function App() {
         {/* Main Content Area */}
         <main className="flex-1 ml-0 md:ml-[240px] overflow-y-auto bg-surface-base p-gutter-desktop pb-24 md:pb-12">
           <div className="max-w-container-max mx-auto space-y-6">
-            
-            {/* VIEW 1: OVERVIEW DASHBOARD */}
+                    {/* VIEW 1: OVERVIEW DASHBOARD */}
             {activeView === 'overview' && (
               <>
-                {/* Hero Card: Footprint Metric & Circle Gauge */}
-                <section className="bg-surface-elevated border border-border-subtle rounded-xl p-8 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-primary-fixed-dim/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+                {/* Top Section: Carbon Readiness & Live Vitals */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                   
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
-                    <div>
-                      <p className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Total Carbon Footprint (Live)</p>
-                      <h1 className="font-mono-azeret text-[40px] md:text-[56px] text-primary-fixed-dim leading-none font-bold">
-                        {spentToday.toFixed(2)} kg CO₂e
-                      </h1>
+                  {/* Left Column: Carbon Readiness Index (Col 4) */}
+                  <div className="lg:col-span-4">
+                    <div className="bg-surface-elevated p-8 rounded-3xl border border-border-subtle flex flex-col items-center text-center shadow-sm">
+                      <span className="text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-6 font-sans">Carbon Readiness</span>
                       
-                      {spentToday > 0 ? (
-                        <div className={`flex items-center gap-2 mt-4 font-bold font-label-md text-label-md ${spentToday <= dailyBudget ? 'text-success-neon' : 'text-error-flash'}`}>
-                          <span className="material-symbols-outlined text-[20px]">
-                            {spentToday <= dailyBudget ? 'trending_down' : 'trending_up'}
-                          </span>
-                          <span>
-                            {spentToday <= dailyBudget 
-                              ? `↓ ${(dailyBudget - spentToday).toFixed(1)} kg under daily cap` 
-                              : `↑ ${(spentToday - dailyBudget).toFixed(1)} kg over daily cap!`}
+                      <div className="relative w-48 h-48 flex items-center justify-center">
+                        <svg className="w-full h-full -rotate-90" viewBox="0 0 192 192">
+                          <circle className="text-surface-container" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="6"></circle>
+                          <circle className="text-primary rounded-full transition-all duration-1000" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502.65" stroke-dashoffset={String(502.65 - (Math.min(100, Math.max(0, 100 - percentUsed)) / 100) * 502.65)} stroke-width="12" stroke-linecap="round"></circle>
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="font-serif text-5xl font-light">{Math.max(0, Math.round(100 - percentUsed))}</span>
+                          <span className="text-[10px] font-bold text-primary tracking-widest uppercase mt-1">
+                            {percentUsed === 0 ? 'CLEAN' : percentUsed <= 50 ? 'OPTIMAL' : percentUsed <= 100 ? 'STABLE' : 'CRITICAL'}
                           </span>
                         </div>
-                      ) : (
-                        <div className="flex items-center gap-2 mt-4 text-on-surface-variant font-label-md text-label-md">
-                          <span className="material-symbols-outlined text-[20px]">info</span>
-                          <span>No carbon events logged today. Load demo data to populate.</span>
-                        </div>
-                      )}
+                      </div>
+                      
+                      <div className="mt-8 grid grid-cols-3 gap-2 w-full">
+                        <div className={`h-1.5 rounded-full ${percentUsed <= 50 ? 'bg-primary' : 'bg-primary/20'}`}></div>
+                        <div className={`h-1.5 rounded-full ${percentUsed > 50 && percentUsed <= 100 ? 'bg-primary' : percentUsed <= 50 ? 'bg-primary' : 'bg-primary/20'}`}></div>
+                        <div className={`h-1.5 rounded-full ${percentUsed > 100 ? 'bg-error' : 'bg-outline-variant/30'}`}></div>
+                      </div>
+                      
+                      <p className="mt-6 text-xs text-on-surface-variant leading-relaxed font-sans">
+                        {spentToday === 0 
+                          ? "Your carbon ledger is currently clean. Load some data or log an event to calculate readiness."
+                          : spentToday <= dailyBudget 
+                            ? `Daily carbon footprint is stable. You have ${(dailyBudget - spentToday).toFixed(1)} kg CO2e remaining.`
+                            : `🚨 Warning: Daily budget exceeded by ${(spentToday - dailyBudget).toFixed(1)} kg! Swap to lower impact choices.`
+                        }
+                      </p>
                     </div>
+                  </div>
+                  
+                  {/* Right Column: Live Ingestion Vitals (Col 8) */}
+                  <div className="lg:col-span-8 space-y-4">
+                    <div className="flex justify-between items-center px-2">
+                      <h3 className="text-[10px] font-bold tracking-widest text-on-surface-variant uppercase font-sans">Carbon Ingestion Vitals</h3>
+                      <button 
+                        onClick={() => setActiveView('upload')}
+                        className="text-xs font-bold text-primary flex items-center gap-1 hover:underline bg-primary/5 px-3 py-1.5 rounded-lg transition-all cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">publish</span>
+                        Ingest Portal
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Vitals Card 1: Travel */}
+                      <div className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 transition-all shadow-sm">
+                        <div className="flex justify-between items-start">
+                          <span className="material-symbols-outlined text-primary">directions_run</span>
+                          <span className="text-[9px] font-bold text-primary uppercase font-sans">{travelPercent}% of total</span>
+                        </div>
+                        <div>
+                          <span className="font-serif text-4xl block text-primary">{travel.toFixed(1)}<span className="text-sm ml-1 font-sans text-on-surface-variant font-light">kg CO2e</span></span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant font-sans">Travel Emissions</span>
+                        </div>
+                        <div className="w-full h-8 flex items-end gap-1 mt-2">
+                          {[30, 45, 60, travelPercent > 0 ? travelPercent : 35, 20].map((h, idx) => (
+                            <div key={idx} className="flex-1 bg-primary rounded-t-sm" style={{ height: `${h}%`, opacity: idx === 3 ? 1 : 0.25 }}></div>
+                          ))}
+                        </div>
+                      </div>
 
-                    {/* Circle Progress Widget */}
-                    <div className="relative w-32 h-32 flex items-center justify-center">
-                      <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-                        <circle className="text-surface-container-highest" cx="60" cy="60" fill="transparent" r="56" stroke="currentColor" stroke-width="8"></circle>
-                        <circle className="text-primary-fixed-dim arc-progress" cx="60" cy="60" fill="transparent" r="56" stroke="currentColor" stroke-dasharray="351.85" stroke-dashoffset="351.85" stroke-width="8" stroke-linecap="round"></circle>
-                      </svg>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="font-sans text-2xl text-primary font-bold">{Math.round(percentUsed)}%</span>
-                        <span className="font-label-sm text-[10px] text-on-surface-variant">BUDGET</span>
+                      {/* Vitals Card 2: Diet */}
+                      <div className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 transition-all shadow-sm">
+                        <div className="flex justify-between items-start">
+                          <span className="material-symbols-outlined text-primary">restaurant</span>
+                          <span className="text-[9px] font-bold text-primary uppercase font-sans">{foodPercent}% of total</span>
+                        </div>
+                        <div>
+                          <span className="font-serif text-4xl block text-primary">{food.toFixed(1)}<span className="text-sm ml-1 font-sans text-on-surface-variant font-light">kg CO2e</span></span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant font-sans">Diet Auditing</span>
+                        </div>
+                        <div className="w-full h-8 flex items-center mt-2">
+                          <svg className="w-full h-full text-primary opacity-40" viewBox="0 0 100 20">
+                            <path d="M0 10 Q 25 18, 50 5 T 100 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Vitals Card 3: Digital */}
+                      <div className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 transition-all shadow-sm">
+                        <div className="flex justify-between items-start">
+                          <span className="material-symbols-outlined text-primary">devices</span>
+                          <span className="text-[9px] font-bold text-primary uppercase font-sans">Stable</span>
+                        </div>
+                        <div>
+                          <span className="font-serif text-4xl block text-primary">{other.toFixed(1)}<span className="text-sm ml-1 font-sans text-on-surface-variant font-light">kg CO2e</span></span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant font-sans">Digital Services</span>
+                        </div>
+                        <div className="w-full h-8 flex items-end gap-1 mt-2">
+                          {[20, 50, 40, other > 0 ? 80 : 30, 60].map((h, idx) => (
+                            <div key={idx} className="flex-1 bg-primary/40 rounded-t-sm" style={{ height: `${h}%`, opacity: idx === 3 ? 1 : 0.3 }}></div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Vitals Card 4: Financial */}
+                      <div className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 transition-all shadow-sm">
+                        <div className="flex justify-between items-start">
+                          <span className="material-symbols-outlined text-primary">payments</span>
+                          <span className="text-[9px] font-bold text-primary uppercase font-sans">{financePercent}% of total</span>
+                        </div>
+                        <div>
+                          <span className="font-serif text-4xl block text-primary">{finance.toFixed(1)}<span className="text-sm ml-1 font-sans text-on-surface-variant font-light">kg CO2e</span></span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant font-sans">Financial Spend</span>
+                        </div>
+                        <div className="w-full h-8 flex items-center mt-2">
+                          <svg className="w-full h-full text-primary" viewBox="0 0 100 20">
+                            <path d="M0 15 L 15 5 L 30 18 L 50 3 L 70 12 L 85 8 L 100 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                          </svg>
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  <div className="space-y-3">
-                    <div className="flex justify-between font-label-md text-label-md">
-                      <span className="text-on-surface-variant">Daily Budget Utilization</span>
-                      <span className="text-on-surface">{dailyBudget.toFixed(1)} kg Cap</span>
-                    </div>
-                    <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden p-[1px]">
-                      <div className="h-full budget-gradient rounded-full transition-all duration-500" style={{ width: `${percentUsed}%` }}></div>
-                    </div>
-                    <div className="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
-                      <span>0 kg</span>
-                      <span>{ (dailyBudget / 2).toFixed(1) } kg (Ideal)</span>
-                      <span>{dailyBudget.toFixed(0)} kg</span>
-                    </div>
-                  </div>
-                </section>
+                </div>
 
                 {/* SDG Goals Alignment Strip */}
                 <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -330,117 +393,211 @@ export function App() {
                   </div>
                 </section>
 
-                {/* Bento Grid: Category Breakdown */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Travel Card */}
-                  <div className="bg-surface-elevated border border-border-subtle rounded-xl p-6 hover:border-primary-fixed-dim transition-all group">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="p-2 bg-surface-container rounded-lg text-primary">
-                        <span className="material-symbols-outlined">directions_run</span>
-                      </div>
-                      <span className="font-label-sm text-label-sm text-on-surface-variant">{travelPercent}% of total</span>
+                {/* Smarter Carbon Swaps Section */}
+                <section>
+                  <div className="flex justify-between items-end mb-6">
+                    <div>
+                      <h2 className="font-serif text-2xl text-primary font-bold">Smarter Carbon Swaps</h2>
+                      <p className="text-on-surface-variant text-sm mt-1">High-impact behavioral optimization based on parsed ledger context.</p>
                     </div>
-                    <h3 className="font-serif text-lg mb-1 font-bold text-primary">Travel</h3>
-                    <p className="font-mono-azeret text-[24px] text-primary font-bold">{travel.toFixed(2)} kg</p>
-                    <div className="h-1 w-full bg-surface-container-highest rounded-full mt-4">
-                      <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${travelPercent}%` }}></div>
-                    </div>
+                    <button 
+                      onClick={() => setActiveView('history')}
+                      className="text-primary font-bold text-sm flex items-center gap-1 hover:underline font-sans cursor-pointer bg-transparent border-none"
+                    >
+                      View Report
+                      <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    </button>
                   </div>
                   
-                  {/* Food Card */}
-                  <div className="bg-surface-elevated border border-border-subtle rounded-xl p-6 hover:border-primary-fixed-dim transition-all group">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="p-2 bg-surface-container rounded-lg text-tertiary-fixed-dim">
-                        <span className="material-symbols-outlined">restaurant</span>
-                      </div>
-                      <span className="font-label-sm text-label-sm text-on-surface-variant">{foodPercent}% of total</span>
-                    </div>
-                    <h3 className="font-serif text-lg mb-1 font-bold text-primary">Food</h3>
-                    <p className="font-mono-azeret text-[24px] text-tertiary-fixed-dim font-bold">{food.toFixed(2)} kg</p>
-                    <div className="h-1 w-full bg-surface-container-highest rounded-full mt-4">
-                      <div className="h-full bg-tertiary-fixed-dim rounded-full transition-all duration-500" style={{ width: `${foodPercent}%` }}></div>
-                    </div>
-                  </div>
-
-                  {/* Finance Card */}
-                  <div className="bg-surface-elevated border border-border-subtle rounded-xl p-6 hover:border-primary-fixed-dim transition-all group">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="p-2 bg-surface-container rounded-lg text-secondary-fixed-dim">
-                        <span className="material-symbols-outlined">payments</span>
-                      </div>
-                      <span className="font-label-sm text-label-sm text-on-surface-variant">{financePercent}% of total</span>
-                    </div>
-                    <h3 className="font-serif text-lg mb-1 font-bold text-primary">Finance</h3>
-                    <p className="font-mono-azeret text-[24px] text-secondary-fixed-dim font-bold">{finance.toFixed(2)} kg</p>
-                    <div className="h-1 w-full bg-surface-container-highest rounded-full mt-4">
-                      <div className="h-full bg-secondary-fixed-dim rounded-full transition-all duration-500" style={{ width: `${financePercent}%` }}></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Audit Insight Strip */}
-                <div className="bg-surface-container-low border border-success-neon/20 rounded-xl p-4 flex flex-col md:flex-row items-center gap-4">
-                  <div className="bg-success-neon/10 p-2 rounded-full border border-success-neon/10">
-                    <span className="material-symbols-outlined text-success-neon">lightbulb</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-body-md text-body-md text-on-surface text-sm">
-                      <span className="font-bold text-success-neon">Audit Insight:</span>{' '}
-                      {spentToday > dailyBudget 
-                        ? `You are exceeding the global cap by ${(spentToday - dailyBudget).toFixed(2)} kg. Swapping out a single high-impact item using the local assistant below will lower your score.`
-                        : `Your current carbon trajectory is 12% lower than the regional baseline. Avoiding high-intensity foods today keeps you in the top tier.`}
-                    </p>
-                  </div>
-                  <button 
-                    onClick={() => setActiveView('history')}
-                    className="font-label-md text-label-md text-success-neon hover:underline cursor-pointer bg-transparent border-none"
-                  >
-                    View Action Plan
-                  </button>
-                </div>
-
-                {/* Carbon Velocity Graph (Interactive Bar Chart) */}
-                <div className="bg-surface-elevated border border-border-subtle rounded-xl p-6 h-64 flex flex-col">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="font-headline-md text-headline-md font-bold">Carbon Velocity</h3>
-                    <div className="flex gap-2">
-                      <span className="px-3 py-1 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded border border-border-subtle">7 Days</span>
-                      <span className="px-3 py-1 bg-primary text-on-primary-fixed font-label-sm text-label-sm rounded">30 Days</span>
-                    </div>
-                  </div>
-                  <div className="flex-1 w-full relative">
-                    <div className="absolute inset-0 flex items-end justify-between px-4 pb-2">
-                      {/* Simulated Chart Bars with tooltips */}
-                      {[
-                        { height: 'h-[40%]', label: 'D-9', val: '6.0 kg' },
-                        { height: 'h-[60%]', label: 'D-8', val: '9.0 kg' },
-                        { height: 'h-[80%]', label: 'D-7', val: '12.0 kg', active: true },
-                        { height: 'h-[45%]', label: 'D-6', val: '6.7 kg' },
-                        { height: 'h-[30%]', label: 'D-5', val: '4.5 kg' },
-                        { height: 'h-[55%]', label: 'D-4', val: '8.2 kg' },
-                        { height: 'h-[90%]', label: 'D-3', val: '13.5 kg' },
-                        { height: 'h-[40%]', label: 'D-2', val: '6.0 kg' },
-                        { height: 'h-[60%]', label: 'D-1', val: '9.0 kg' },
-                        { height: `h-[${Math.round(percentUsed)}%]`, label: 'Today', val: `${spentToday.toFixed(1)} kg`, active: true, live: true }
-                      ].map((bar, i) => (
-                        <div key={i} className="flex-1 flex flex-col items-center group relative cursor-pointer mx-1 h-full justify-end">
-                          <div className="opacity-0 group-hover:opacity-100 absolute -top-8 bg-surface-container-highest text-primary border border-outline-variant rounded px-2 py-0.5 text-[10px] font-label-sm pointer-events-none transition-all z-10 whitespace-nowrap shadow-xl">
-                            {bar.val}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Swap 1: Beef -> Vegan Burger */}
+                    <div className="bg-surface-elevated rounded-3xl p-6 shadow-sm border border-border-subtle flex flex-col gap-5 hover:border-primary/40 transition-all duration-500 cursor-pointer group">
+                      <div className="flex h-40 rounded-2xl overflow-hidden">
+                        <div className="w-1/2 relative bg-surface-container flex flex-col items-center justify-center border-r border-border-subtle">
+                          <span className="text-4xl">🥩</span>
+                          <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mt-2">Beef Steak</span>
+                          <div className="absolute top-2 left-2 bg-error-container text-on-error-container px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest">
+                            Before
                           </div>
-                          <div 
-                            className={`w-full max-w-[28px] rounded-t-sm transition-all duration-300 ${
-                              bar.live 
-                                ? 'bg-primary-fixed-dim shadow-[0_-4px_12px_rgba(0,219,233,0.2)]'
-                                : bar.active 
-                                  ? 'bg-primary' 
-                                  : 'bg-surface-container-highest hover:bg-primary-fixed-dim'
-                            }`}
-                            style={{ height: bar.live ? `${percentUsed}%` : bar.height.replace('h-[', '').replace(']', '') }}
-                          ></div>
                         </div>
-                      ))}
+                        <div className="w-1/2 relative bg-primary-container/40 flex flex-col items-center justify-center">
+                          <span className="text-4xl">🍔</span>
+                          <span className="text-[10px] font-bold text-primary uppercase tracking-widest mt-2">Plant Burger</span>
+                          <div className="absolute top-2 left-2 bg-primary/20 border border-primary/20 px-2 py-0.5 rounded-full text-[8px] font-bold text-primary uppercase tracking-widest">
+                            Better
+                          </div>
+                        </div>
+                      </div>
+                      <div className="px-1">
+                        <h3 className="font-serif text-lg font-bold text-primary mb-2">Plant-Based Substitution</h3>
+                        <div className="flex gap-2">
+                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-primary-container text-primary font-sans">-95% Carbon</span>
+                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-tertiary-container text-tertiary font-sans">+22g Protein</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Swap 2: Flight -> Train */}
+                    <div className="bg-surface-elevated rounded-3xl p-6 shadow-sm border border-border-subtle flex flex-col gap-5 hover:border-primary/40 transition-all duration-500 cursor-pointer group">
+                      <div className="flex h-40 rounded-2xl overflow-hidden">
+                        <div className="w-1/2 relative bg-surface-container flex flex-col items-center justify-center border-r border-border-subtle">
+                          <span className="text-4xl">✈️</span>
+                          <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mt-2">Short Flight</span>
+                          <div className="absolute top-2 left-2 bg-error-container text-on-error-container px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest">
+                            Before
+                          </div>
+                        </div>
+                        <div className="w-1/2 relative bg-primary-container/40 flex flex-col items-center justify-center">
+                          <span className="text-4xl">🚄</span>
+                          <span className="text-[10px] font-bold text-primary uppercase tracking-widest mt-2">Electric Rail</span>
+                          <div className="absolute top-2 left-2 bg-primary/20 border border-primary/20 px-2 py-0.5 rounded-full text-[8px] font-bold text-primary uppercase tracking-widest">
+                            Better
+                          </div>
+                        </div>
+                      </div>
+                      <div className="px-1">
+                        <h3 className="font-serif text-lg font-bold text-primary mb-2">Intercity High-Speed Rail</h3>
+                        <div className="flex gap-2">
+                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-primary-container text-primary font-sans">-90% Carbon</span>
+                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-tertiary-container text-tertiary font-sans">Eco Scenic</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Swap 3: Solo SUV Drive -> E-Scooter */}
+                    <div className="bg-surface-elevated rounded-3xl p-6 shadow-sm border border-border-subtle flex flex-col gap-5 hover:border-primary/40 transition-all duration-500 cursor-pointer group">
+                      <div className="flex h-40 rounded-2xl overflow-hidden">
+                        <div className="w-1/2 relative bg-surface-container flex flex-col items-center justify-center border-r border-border-subtle">
+                          <span className="text-4xl">🚗</span>
+                          <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mt-2">Solo SUV</span>
+                          <div className="absolute top-2 left-2 bg-error-container text-on-error-container px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-widest">
+                            Before
+                          </div>
+                        </div>
+                        <div className="w-1/2 relative bg-primary-container/40 flex flex-col items-center justify-center">
+                          <span className="text-4xl">🛴</span>
+                          <span className="text-[10px] font-bold text-primary uppercase tracking-widest mt-2">E-Scooter / Bike</span>
+                          <div className="absolute top-2 left-2 bg-primary/20 border border-primary/20 px-2 py-0.5 rounded-full text-[8px] font-bold text-primary uppercase tracking-widest">
+                            Better
+                          </div>
+                        </div>
+                      </div>
+                      <div className="px-1">
+                        <h3 className="font-serif text-lg font-bold text-primary mb-2">Micro-Mobility Commute</h3>
+                        <div className="flex gap-2">
+                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-primary-container text-primary font-sans">-98% Carbon</span>
+                          <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-tertiary-container text-tertiary font-sans">Active Transit</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                </section>
+
+                {/* Bottom Section: Timeline Journey & Forecast */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                  {/* Left Bottom Column: Today's Journey (Col 5) */}
+                  <div className="lg:col-span-5 space-y-6">
+                    <h2 className="font-serif text-2xl text-primary font-bold px-1">Today's Journey</h2>
+                    <div className="space-y-4">
+                      {events.length > 0 ? (
+                        events.slice(0, 3).map((evt) => (
+                          <div key={evt.id} className="flex items-center gap-4 bg-surface-elevated border border-border-subtle p-4 rounded-2xl shadow-sm">
+                            <div className="w-12 h-12 rounded-xl bg-primary-container/30 text-primary flex items-center justify-center text-lg">
+                              {evt.source === 'vision' ? '📸' : evt.source === 'financial' ? '💳' : '⚡'}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[9px] font-bold text-primary uppercase tracking-widest font-sans">{evt.category}</p>
+                              <h4 className="font-serif text-sm font-semibold truncate text-primary">{evt.description}</h4>
+                            </div>
+                            <span className="text-xs font-bold text-error-flash font-mono">+{evt.totalCo2e.toFixed(1)}kg</span>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-xs text-on-surface-variant/60 italic px-1">No carbon activities audited today...</p>
+                      )}
+                      
+                      {/* Upcoming Callout */}
+                      <div className="flex items-center gap-4 border border-dashed border-outline-variant p-4 rounded-2xl bg-surface-container/20">
+                        <div className="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center">
+                          <span className="material-symbols-outlined text-outline text-lg">add_a_photo</span>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-[9px] font-bold text-outline uppercase tracking-widest font-sans">Next • Upcoming</p>
+                          <h4 className="font-serif text-sm font-semibold text-on-surface/50">Log Evening Dinner</h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Bottom Column: Response Forecast (Col 7) */}
+                  <div className="lg:col-span-7 bg-surface-elevated p-8 rounded-3xl border border-border-subtle shadow-sm flex flex-col justify-between">
+                    <div className="flex justify-between items-start mb-6">
+                      <div>
+                        <h3 className="font-serif text-xl font-bold text-primary">Carbon Response Forecast</h3>
+                        <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">Simulated projection of cumulative carbon footprint for the next 4 hours.</p>
+                      </div>
+                      <div className="bg-surface-container-low px-4 py-2 rounded-xl text-center border border-border-subtle">
+                        <span className="block text-[8px] font-bold text-on-surface-variant uppercase font-sans">Confidence</span>
+                        <span className="font-serif text-lg text-primary font-bold">92%</span>
+                      </div>
+                    </div>
+                    
+                    {/* Simulated Graph Lines */}
+                    <div className="h-28 flex items-end gap-1 relative border-b border-border-subtle pb-1">
+                      <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+                        <div className="border-t border-on-surface w-full"></div>
+                        <div className="border-t border-on-surface w-full"></div>
+                        <div className="border-t border-on-surface w-full"></div>
+                      </div>
+                      <svg className="w-full h-full text-primary" viewBox="0 0 100 40" preserveAspectRatio="none">
+                        <path d="M0 38 Q 20 32, 40 28 T 80 18 T 100 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                        <path d="M0 38 Q 20 35, 40 33 T 80 28 T 100 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2" stroke-linecap="round"></path>
+                      </svg>
+                    </div>
+                    
+                    <div className="mt-4 flex gap-6">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-primary"></span>
+                        <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider font-sans">Forecast Trajectory</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#9ca3af]"></span>
+                        <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider font-sans">Standard Path</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Action Strip Banner */}
+                <div className="bg-primary-container p-8 rounded-[2rem] flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden border border-border-subtle">
+                  <div className="relative z-10">
+                    <h2 className="font-serif text-2xl font-bold text-primary">Capture your footprint.</h2>
+                    <p className="text-on-surface-variant max-w-sm text-xs mt-2 leading-relaxed">Log your local digital artifacts and files offline for absolute carbon privacy auditing.</p>
+                  </div>
+                  <div className="flex flex-wrap gap-4 relative z-10">
+                    <button 
+                      onClick={() => setActiveView('receipt-parser')}
+                      className="bg-surface-elevated hover:bg-surface border border-border-subtle text-primary px-5 py-3 rounded-2xl flex items-center gap-3 shadow-sm hover:scale-105 transition-all font-bold text-xs cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-primary">photo_camera</span>
+                      Scan Receipt
+                    </button>
+                    <button 
+                      onClick={() => { setActiveView('upload'); setActiveUploader('location'); }}
+                      className="bg-surface-elevated hover:bg-surface border border-border-subtle text-primary px-5 py-3 rounded-2xl flex items-center gap-3 shadow-sm hover:scale-105 transition-all font-bold text-xs cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-primary">cloud_upload</span>
+                      Import Takeout
+                    </button>
+                    <button 
+                      onClick={() => { setActiveView('upload'); setActiveUploader('digital'); }}
+                      className="bg-surface-elevated hover:bg-surface border border-border-subtle text-primary px-5 py-3 rounded-2xl flex items-center gap-3 shadow-sm hover:scale-105 transition-all font-bold text-xs cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-primary">search</span>
+                      Manual Log
+                    </button>
+                  </div>
+                  <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
                 </div>
 
                 {/* Context-Aware Assistant Section */}
