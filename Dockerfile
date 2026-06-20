@@ -1,14 +1,15 @@
-# Stage 1: Build the Preact/Vite application
+# Stage 1: Build the static website
 FROM node:20-alpine AS build
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
+RUN npm install -g pnpm
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 COPY . .
-RUN npm run build
+RUN pnpm build
 
-# Stage 2: Serve the built application with Nginx
+# Stage 2: Serve the static website with Nginx
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
