@@ -1,85 +1,89 @@
 @import "tailwindcss";
 
 @theme {
-  --color-surface: #0d1515;
-  --color-surface-dim: #0d1515;
-  --color-surface-bright: #333b3b;
-  --color-surface-container-lowest: #080f10;
-  --color-surface-container-low: #151d1e;
-  --color-surface-container: #192122;
-  --color-surface-container-high: #232b2c;
-  --color-surface-container-highest: #2e3637;
-  --color-on-surface: #dce4e5;
-  --color-on-surface-variant: #b9cacb;
-  --color-inverse-surface: #dce4e5;
-  --color-inverse-on-surface: #2a3233;
-  --color-outline: #849495;
-  --color-outline-variant: #3b494b;
-  --color-surface-tint: #00dbe9;
+  /* Warm Light Mode Theme (optimistic, clean, sustainable green and cream) */
+  --color-surface: #FCFAF2;
+  --color-surface-dim: #F5F2E6;
+  --color-surface-bright: #FFFFFF;
+  --color-surface-container-lowest: #FAF8F0;
+  --color-surface-container-low: #F5F2E6;
+  --color-surface-container: #EBE7D8;
+  --color-surface-container-high: #E2DDD0;
+  --color-surface-container-highest: #D5CFC0;
+  --color-on-surface: #1C1B17;
+  --color-on-surface-variant: #4E4A3F;
+  --color-inverse-surface: #1C1B17;
+  --color-inverse-on-surface: #FCFAF2;
+  --color-outline: #807B70;
+  --color-outline-variant: #CCC5B9;
+  --color-surface-tint: #2D6A4F;
   
-  --color-primary: #dbfcff;
-  --color-on-primary: #00363a;
-  --color-primary-container: #00f0ff;
-  --color-on-primary-container: #006970;
-  --color-inverse-primary: #006970;
+  --color-primary: #1B4332; /* Rich dark green for typography and primary buttons (high contrast/readability) */
+  --color-on-primary: #FCFAF2;
+  --color-primary-container: #D8F3DC; /* Soft optimistic light green container */
+  --color-on-primary-container: #081C15;
+  --color-inverse-primary: #40916C;
   
-  --color-secondary: #d1bcff;
-  --color-on-secondary: #3c0090;
-  --color-secondary-container: #7000ff;
-  --color-on-secondary-container: #ddcdff;
+  --color-secondary: #40916C; /* Medium sage green */
+  --color-on-secondary: #FFFFFF;
+  --color-secondary-container: #E9EFE9;
+  --color-on-secondary-container: #1B4332;
   
-  --color-tertiary: #fff5de;
-  --color-on-tertiary: #3b2f00;
-  --color-tertiary-container: #fed639;
-  --color-on-tertiary-container: #715d00;
+  --color-tertiary: #B28E10; /* Warm warm gold/amber */
+  --color-on-tertiary: #FFFFFF;
+  --color-tertiary-container: #FFF3CD; /* Soft sunny cream/yellow for optimism and alerts */
+  --color-on-tertiary-container: #5E4E10;
   
-  --color-error: #ffb4ab;
-  --color-on-error: #690005;
-  --color-error-container: #93000a;
-  --color-on-error-container: #ffdad6;
+  --color-error: #B00020; /* Deep readable accessible red */
+  --color-on-error: #FFFFFF;
+  --color-error-container: #FDE8E8;
+  --color-on-error-container: #8A0010;
   
-  --color-primary-fixed: #7df4ff;
-  --color-primary-fixed-dim: #00dbe9;
-  --color-on-primary-fixed: #002022;
-  --color-on-primary-fixed-variant: #004f54;
+  --color-primary-fixed: #D8F3DC;
+  --color-primary-fixed-dim: #74C69D;
+  --color-on-primary-fixed: #081C15;
+  --color-on-primary-fixed-variant: #1B4332;
   
-  --color-secondary-fixed: #e9ddff;
-  --color-secondary-fixed-dim: #d1bcff;
-  --color-on-secondary-fixed: #23005b;
-  --color-on-secondary-fixed-variant: #5700c9;
+  --color-secondary-fixed: #E9EFE9;
+  --color-secondary-fixed-dim: #B7D1B7;
+  --color-on-secondary-fixed: #0C2E20;
+  --color-on-secondary-fixed-variant: #2D6A4F;
   
-  --color-tertiary-fixed: #ffe179;
-  --color-tertiary-fixed-dim: #eac324;
-  --color-on-tertiary-fixed: #231b00;
-  --color-on-tertiary-fixed-variant: #554500;
+  --color-tertiary-fixed: #FFF3CD;
+  --color-tertiary-fixed-dim: #FFE89C;
+  --color-on-tertiary-fixed: #3D3200;
+  --color-on-tertiary-fixed-variant: #695700;
   
-  --color-background: #0d1515;
-  --color-on-background: #dce4e5;
-  --color-surface-variant: #2e3637;
-  --color-surface-base: #0A0A0B;
-  --color-surface-elevated: #141416;
-  --color-border-subtle: #262629;
-  --color-success-neon: #39FF14;
-  --color-error-flash: #FF3131;
-
-  --font-sora: "Sora", sans-serif;
-  --font-inter: "Inter", sans-serif;
+  --color-background: #FCFAF2;
+  --color-on-background: #1C1B17;
+  --color-surface-variant: #EBE7D8;
+  --color-surface-base: #FCFAF2;
+  --color-surface-elevated: #FFFFFF;
+  --color-border-subtle: #E2DDD0;
+  --color-success-neon: #2D6A4F; /* High-contrast readable forest green */
+  --color-error-flash: #D32F2F;
+  
+  /* Font Family Definitions */
+  --font-serif: "Fraunces", serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
   --font-mono-jet: "JetBrains Mono", monospace;
-  --font-mono-azeret: "Azeret Mono", monospace;
-  --font-syne: "Syne", sans-serif;
+  --font-mono-azeret: "JetBrains Mono", monospace;
+  --font-syne: "Fraunces", serif;
+  --font-sora: "Plus Jakarta Sans", sans-serif;
+  --font-inter: "Plus Jakarta Sans", sans-serif;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #0A0A0B;
-  color: #dce4e5;
+  background-color: #FCFAF2;
+  color: #1C1B17;
   -webkit-font-smoothing: antialiased;
-  font-family: var(--font-inter);
+  font-family: var(--font-sans);
 }
 
 .material-symbols-outlined {
@@ -94,20 +98,20 @@ body {
 }
 
 .glass-panel {
-  background: rgba(20, 20, 22, 0.8);
+  background: rgba(252, 250, 242, 0.85);
   backdrop-filter: blur(8px);
 }
 
 .budget-gradient {
-  background: linear-gradient(90deg, #39FF14 0%, #fed639 60%, #FF3131 100%);
+  background: linear-gradient(90deg, #2D6A4F 0%, #B28E10 60%, #D32F2F 100%);
 }
 
 .upload-dashed {
-  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%233b494b' stroke-width='2' stroke-dasharray='8%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%23CCC5B9' stroke-width='2' stroke-dasharray='8%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
 }
 
 .upload-dashed:hover {
-  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%2300dbe9' stroke-width='2' stroke-dasharray='8%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='%232D6A4F' stroke-width='2' stroke-dasharray='8%2c 12' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -120,12 +124,12 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #3b494b;
+  background: #CCC5B9;
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #849495;
+  background: #807B70;
 }
 
 /* Custom animation keyframes */
@@ -150,7 +154,7 @@ body {
   left: 0;
   right: 0;
   height: 4px;
-  background: rgba(0, 219, 233, 0.5);
-  box-shadow: 0 0 8px #00dbe9;
+  background: rgba(45, 106, 79, 0.5);
+  box-shadow: 0 0 8px #2D6A4F;
   animation: scan-animation 4s linear infinite;
 }

@@ -126,7 +126,7 @@ export function App() {
       <header className="glass-panel border-b border-border-subtle flex justify-between items-center w-full px-gutter-desktop h-16 fixed top-0 z-50">
         <div 
           onClick={() => setActiveView('overview')}
-          className="font-headline-md text-headline-md font-bold text-primary cursor-pointer hover:opacity-95 flex items-center gap-2"
+          className="font-serif text-[22px] font-bold text-primary cursor-pointer hover:opacity-95 flex items-center gap-2"
         >
           <span className="text-xl">⚡</span>
           <span>EcoPulse</span>
@@ -178,7 +178,7 @@ export function App() {
                 EP
               </div>
               <div>
-                <div className="font-headline-md text-[14px] font-bold text-primary">EcoPulse Auditor</div>
+                <div className="font-serif text-[15px] font-bold text-primary">EcoPulse Auditor</div>
                 <div className="font-label-sm text-[10px] text-on-surface-variant uppercase">Daily Budget</div>
               </div>
             </div>
@@ -283,7 +283,7 @@ export function App() {
                         <circle className="text-primary-fixed-dim arc-progress" cx="60" cy="60" fill="transparent" r="56" stroke="currentColor" stroke-dasharray="351.85" stroke-dashoffset="351.85" stroke-width="8" stroke-linecap="round"></circle>
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="font-headline-md text-headline-md text-primary font-bold">{Math.round(percentUsed)}%</span>
+                        <span className="font-sans text-2xl text-primary font-bold">{Math.round(percentUsed)}%</span>
                         <span className="font-label-sm text-[10px] text-on-surface-variant">BUDGET</span>
                       </div>
                     </div>
@@ -305,6 +305,31 @@ export function App() {
                   </div>
                 </section>
 
+                {/* SDG Goals Alignment Strip */}
+                <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="bg-surface-elevated border border-border-subtle rounded-xl p-5 flex gap-4 items-start shadow-sm">
+                    <span className="text-3xl text-primary font-serif">13</span>
+                    <div>
+                      <h4 className="font-serif text-sm font-bold text-primary">SDG 13: Climate Action</h4>
+                      <p className="text-[11px] text-on-surface-variant leading-relaxed mt-1">Calculations use GWP AR6 vintages to target a sustainable 15kg daily CO2e ceiling.</p>
+                    </div>
+                  </div>
+                  <div className="bg-surface-elevated border border-border-subtle rounded-xl p-5 flex gap-4 items-start shadow-sm">
+                    <span className="text-3xl text-primary font-serif">12</span>
+                    <div>
+                      <h4 className="font-serif text-sm font-bold text-primary">SDG 12: Responsible Consumption</h4>
+                      <p className="text-[11px] text-on-surface-variant leading-relaxed mt-1">Client-side OCR receipt splitting and financial statement auditing to track spending impact.</p>
+                    </div>
+                  </div>
+                  <div className="bg-surface-elevated border border-border-subtle rounded-xl p-5 flex gap-4 items-start shadow-sm">
+                    <span className="text-3xl text-primary font-serif">11</span>
+                    <div>
+                      <h4 className="font-serif text-sm font-bold text-primary">SDG 11: Sustainable Communities</h4>
+                      <p className="text-[11px] text-on-surface-variant leading-relaxed mt-1">Trace location travel segments and identify clean low-carbon commuter alternatives.</p>
+                    </div>
+                  </div>
+                </section>
+
                 {/* Bento Grid: Category Breakdown */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Travel Card */}
@@ -315,7 +340,7 @@ export function App() {
                       </div>
                       <span className="font-label-sm text-label-sm text-on-surface-variant">{travelPercent}% of total</span>
                     </div>
-                    <h3 className="font-headline-md text-headline-md mb-1 font-bold">Travel</h3>
+                    <h3 className="font-serif text-lg mb-1 font-bold text-primary">Travel</h3>
                     <p className="font-mono-azeret text-[24px] text-primary font-bold">{travel.toFixed(2)} kg</p>
                     <div className="h-1 w-full bg-surface-container-highest rounded-full mt-4">
                       <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${travelPercent}%` }}></div>
@@ -330,7 +355,7 @@ export function App() {
                       </div>
                       <span className="font-label-sm text-label-sm text-on-surface-variant">{foodPercent}% of total</span>
                     </div>
-                    <h3 className="font-headline-md text-headline-md mb-1 font-bold">Food</h3>
+                    <h3 className="font-serif text-lg mb-1 font-bold text-primary">Food</h3>
                     <p className="font-mono-azeret text-[24px] text-tertiary-fixed-dim font-bold">{food.toFixed(2)} kg</p>
                     <div className="h-1 w-full bg-surface-container-highest rounded-full mt-4">
                       <div className="h-full bg-tertiary-fixed-dim rounded-full transition-all duration-500" style={{ width: `${foodPercent}%` }}></div>
@@ -345,7 +370,7 @@ export function App() {
                       </div>
                       <span className="font-label-sm text-label-sm text-on-surface-variant">{financePercent}% of total</span>
                     </div>
-                    <h3 className="font-headline-md text-headline-md mb-1 font-bold">Finance</h3>
+                    <h3 className="font-serif text-lg mb-1 font-bold text-primary">Finance</h3>
                     <p className="font-mono-azeret text-[24px] text-secondary-fixed-dim font-bold">{finance.toFixed(2)} kg</p>
                     <div className="h-1 w-full bg-surface-container-highest rounded-full mt-4">
                       <div className="h-full bg-secondary-fixed-dim rounded-full transition-all duration-500" style={{ width: `${financePercent}%` }}></div>
