@@ -7,6 +7,7 @@ Most personal carbon trackers fail for two reasons:
 To solve this, I built **EcoPulse** — a Progressive Web App (PWA) designed to audit your footprint using digital artifacts you *already* own (Google Takeout location records, bank statement exports, and grocery receipts), running **entirely in the browser**.
 
 👉 **Check out the repo here**: [seeramsujay/pollution-check](https://github.com/seeramsujay/pollution-check)
+🔗 **Try the Live Site**: [https://pollution-check-site-453397284615.us-central1.run.app](https://pollution-check-site-453397284615.us-central1.run.app)
 
 ---
 
