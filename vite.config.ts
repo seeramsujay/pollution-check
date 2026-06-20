@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import preact from '@preact/preset-vite'
 import tailwindcss from '@tailwindcss/vite'
 
@@ -12,5 +12,9 @@ export default defineConfig({
       'react/jsx-runtime': 'preact/jsx-runtime',
     },
   },
+  test: {
+    globals: true,
+    environment: 'node',
+    include: ['src/tests/**/*.test.ts'],
+  },
 })
-

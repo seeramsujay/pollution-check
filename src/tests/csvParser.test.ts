@@ -55,4 +55,12 @@ describe('parseFinancialCSV', () => {
     expect(events.length).toBe(1);
     expect(events[0].description).toBe('Trader Joes');
   });
+
+  it('should handle negative transaction amounts correctly by using their absolute value', () => {
+    const validCSV = `date,description,amount\n2024-06-20,Trader Joes,-15.50`;
+    const events = parseFinancialCSV(validCSV);
+    expect(events.length).toBe(1);
+    expect(events[0].rawQuantity).toBe(15.50);
+    expect(events[0].totalCo2e).toBe(5.425); // 15.5 * 0.35 = 5.425
+  });
 });
