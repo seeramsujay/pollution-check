@@ -2,6 +2,8 @@
 
 **Universal Carbon Auditor — Private, Automated, High-Performance.**
 
+🔗 **Live Demo:** [https://pollution-check-site-453397284615.us-central1.run.app](https://pollution-check-site-453397284615.us-central1.run.app)
+
 EcoPulse is a Progressive Web App (PWA) carbon auditing platform designed to automate environmental footprint tracking with zero user friction and absolute data privacy. It parses Google Location History exports, bank statement CSVs, and receipt photos locally in the browser, ledgering them against a **15kg daily CO2e budget** representing the global target for climate stabilization.
 
 ---
@@ -137,7 +139,7 @@ gcloud run deploy ecopulse \
     --platform managed \
     --region us-central1 \
     --allow-unauthenticated \
-    --port 80
+    --port 8080
 ```
 
-Once deployment completes, the CLI will output a secure HTTPS Service URL (e.g. `https://ecopulse-xxxxx-uc.a.run.app`) where your live Google Cloud website is active!
+Once deployment completes, the CLI will output a secure HTTPS Service URL (for example, our live instance: `https://pollution-check-site-453397284615.us-central1.run.app`) where your live Google Cloud website is active!
