@@ -123,7 +123,7 @@ export function App() {
   return (
     <div className={`min-h-screen bg-surface-base text-on-surface flex flex-col antialiased ${darkMode ? 'dark' : ''}`}>
       {/* Top Navigation Bar */}
-      <header className="bg-surface border-b border-border-subtle flex justify-between items-center w-full px-gutter-desktop h-16 fixed top-0 z-50">
+      <header className="glass-panel border-b border-border-subtle flex justify-between items-center w-full px-gutter-desktop h-16 fixed top-0 z-50">
         <div 
           onClick={() => setActiveView('overview')}
           className="font-headline-md text-headline-md font-bold text-primary cursor-pointer hover:opacity-95 flex items-center gap-2"
@@ -171,7 +171,7 @@ export function App() {
       <div className="flex flex-1 pt-16">
         
         {/* Desktop Left Side Navigation */}
-        <aside className="fixed left-0 top-16 bottom-0 flex flex-col py-6 z-40 bg-surface-container border-r border-border-subtle w-[240px] hidden md:flex">
+        <aside className="fixed left-0 top-16 bottom-0 flex flex-col py-6 z-40 glass-panel border-r border-border-subtle w-[240px] hidden md:flex">
           <div className="px-6 mb-8">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-full border-2 border-primary-fixed-dim bg-surface-container-high flex items-center justify-center font-bold text-primary">
