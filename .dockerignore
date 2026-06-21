@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.gitignore
+.antigravitycli
+pnpm-debug.log
+.DS_Store
+*.md
+Archives
+docs
+stitch_ecopulse_monitoring_system

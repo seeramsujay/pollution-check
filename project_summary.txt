@@ -1,0 +1,6 @@
+Project Summary: H0 Hackathon Submission - Zero-Latency B2B Inventory Agent.
+Goal: AI-driven B2B inventory/margin optimization for SMEs.
+Stack: v0.dev (Next.js/Tailwind) frontend, AWS DynamoDB (inventory) + Aurora DSQL (transactions/pricing), Vercel hosting.
+Key Features: Conversational dashboard, real-time inventory tracking, AI-suggested pricing with human-in-the-loop approval guardrails.
+Methodology: v0-generated UI, Server Actions for AWS SDK interaction, automated deployment via Vercel.
+Interactive: Does this project align with your vision for the hackathon? Please reply YES to finalize or NO to pivot.
