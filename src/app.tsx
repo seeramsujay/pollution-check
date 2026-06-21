@@ -1,3 +1,25 @@
+/**
+ * @file app.tsx
+ * @description Root application component for EcoPulse Carbon Auditor.
+ *
+ * This is the central shell that manages:
+ * - View routing (overview / upload / receipt-parser / history)
+ * - Global state subscriptions from the Zustand carbon store
+ * - Dark mode toggle
+ * - Category emission aggregation for the dashboard vitals cards
+ * - Demo data seeding
+ * - The fixed top navigation bar, left sidebar, mobile bottom bar, and footer
+ *
+ * # View Architecture
+ * EcoPulse uses a simple string-based view router rather than a URL router to
+ * preserve local-first privacy (no route changes generate server requests).
+ *
+ *   'overview'       → Main dashboard with readiness dial, vitals, and AI assistant
+ *   'upload'         → Ingest portal for CSV, JSON, and manual digital entries
+ *   'receipt-parser' → Full-screen split-panel OCR receipt auditor
+ *   'history'        → Year-in-review annual carbon ledger report
+ */
+
 import { useState, useEffect } from 'preact/hooks';
 import { useCarbonStore } from './store/carbonStore';
 import { FinancialParser } from './components/FinancialParser';
@@ -32,25 +54,46 @@ export function App() {
    * 
    * @returns {{ travel: number, food: number, finance: number, other: number }}
    */
+  /**
+   * Aggregates today's carbon events into four display buckets used by the
+   * vitals cards on the overview dashboard.
+   *
+   * Categorization priority:
+   * 1. Category string match → Travel or Food bucket
+   * 2. Source === 'financial' → Finance bucket (catch uncategorized spend)
+   * 3. Everything else → Other bucket (digital services, etc.)
+   *
+   * Note: This runs on every render that depends on `events`. Performance is
+   * acceptable because event counts are typically < 200 in a single day.
+   *
+   * @returns Object with `travel`, `food`, `finance`, and `other` kg CO2e totals.
+   */
   const getCategorySums = () => {
-    let travel = 0;
-    let food = 0;
+    let travel  = 0;
+    let food    = 0;
     let finance = 0;
-    let other = 0;
+    let other   = 0;
 
-    events.forEach(evt => {
-      const today = new Date().setHours(0, 0, 0, 0);
-      const isToday = new Date(evt.timestamp).setHours(0, 0, 0, 0) === today;
+    // Normalize midnight once per call rather than per-event to reduce allocations.
+    const todayMidnight = new Date().setHours(0, 0, 0, 0);
+
+    events.forEach((evt) => {
+      // Skip events that were logged on a previous day.
+      const isToday = new Date(evt.timestamp).setHours(0, 0, 0, 0) === todayMidnight;
       if (!isToday) return;
 
       const cat = evt.category.toLowerCase();
-      // Categorize events based on their category string or source type
+
+      // Travel: covers all ground transport, aviation, and ride-sharing categories.
       if (['transport', 'transport (fuel)', 'ride sharing', 'aviation travel', 'travel'].includes(cat)) {
         travel += evt.totalCo2e;
+      // Food: covers all diet-related categories from VisionAuditor and financial matching.
       } else if (['groceries', 'dining out', 'beef', 'lamb', 'cheese', 'pork', 'poultry', 'rice', 'avocados', 'bread', 'peas', 'milk', 'vegetables', 'food'].includes(cat)) {
         food += evt.totalCo2e;
+      // Finance: any spend-based event that doesn't match a travel/food category above.
       } else if (evt.source === 'financial') {
         finance += evt.totalCo2e;
+      // Other: digital services, manual logs, AI query overhead.
       } else {
         other += evt.totalCo2e;
       }
@@ -62,75 +105,107 @@ export function App() {
   const { travel, food, finance, other } = getCategorySums();
   const totalCategoryEmissions = travel + food + finance + other;
 
-  const travelPercent = totalCategoryEmissions > 0 ? Math.round((travel / totalCategoryEmissions) * 100) : 34;
-  const foodPercent = totalCategoryEmissions > 0 ? Math.round((food / totalCategoryEmissions) * 100) : 47;
+  // Percentage breakdowns for vitals card labels.
+  // When no events exist, use representative global-average defaults so the
+  // dashboard still looks informative for new users (not blank/zero).
+  const travelPercent  = totalCategoryEmissions > 0 ? Math.round((travel  / totalCategoryEmissions) * 100) : 34;
+  const foodPercent    = totalCategoryEmissions > 0 ? Math.round((food    / totalCategoryEmissions) * 100) : 47;
   const financePercent = totalCategoryEmissions > 0 ? Math.round((finance / totalCategoryEmissions) * 100) : 19;
 
   /**
-   * Seed the carbon ledger with realistic demonstration data representing various sources.
-   * Clears the current store before inserting.
+   * Seeds the carbon ledger with four realistic demo events spanning all
+   * ingestion source types: financial, digital (location), digital (tracker),
+   * and vision (OCR receipt). Clears any existing data first.
+   *
+   * Demo values are chosen to produce a meaningful readiness dial
+   * (partially filled, not zero) so new users can immediately explore
+   * the dashboard without uploading any files.
+   *
+   * Emission math for demo events:
+   * - Trader Joe's:         $25 × 0.35 kg/$  =  8.75 kg CO2e
+   * - Train (45 km):        45  × 0.03546     =  1.60 kg CO2e
+   * - 4K Streaming (2 hrs): 2   × 0.16 kg/hr =  0.32 kg CO2e
+   * - Ribeye steak (350g):  0.35× 60.0 kg/kg = 21.00 kg CO2e
+   * Total demo footprint: ≈ 31.67 kg CO2e (exceeds 15 kg budget intentionally)
    */
   const loadSampleData = () => {
+    // Wipe existing ledger so demo data is the only content visible.
     clearStore();
 
-    // 1. Trader Joe's Transaction (Financial Source)
+    // 1. Trader Joe's grocery run — parsed via FinancialParser CSV flow.
+    //    Timestamped 1.5 hours ago to appear recent in Today's Journey.
     addEvent({
-      id: crypto.randomUUID(),
-      timestamp: Date.now() - 3600000 * 1.5,
-      source: 'financial',
-      category: 'Groceries',
-      description: 'Trader Joes Store #541',
-      rawQuantity: 25.00,
-      rawUnit: 'usd',
+      id:           crypto.randomUUID(),
+      timestamp:    Date.now() - 3600000 * 1.5,
+      source:       'financial',
+      category:     'Groceries',
+      description:  'Trader Joes Store #541',
+      rawQuantity:  25.00,
+      rawUnit:      'usd',
       co2eIntensity: 0.35,
-      metadata: { merchant: 'traderjoes', mcc: '5411' }
+      metadata:     { merchant: 'traderjoes', mcc: '5411' },
     });
 
-    // 2. Train Travel Segment (Digital Source from Location Takeout)
+    // 2. Train commute — represents a TakeoutParser location segment.
+    //    45 km at 0.03546 kg/km = 1.596 kg CO2e.
     addEvent({
-      id: crypto.randomUUID(),
-      timestamp: Date.now() - 3600000 * 3,
-      source: 'digital',
-      category: 'Transport',
-      description: 'Travel: Transit Train',
-      rawQuantity: 45.0,
-      rawUnit: 'kg',
+      id:           crypto.randomUUID(),
+      timestamp:    Date.now() - 3600000 * 3,
+      source:       'digital',
+      category:     'Transport',
+      description:  'Travel: Transit Train',
+      rawQuantity:  45.0,
+      rawUnit:      'kg',
       co2eIntensity: 0.03546,
-      metadata: { apiRoute: 'takeout-parser' }
+      metadata:     { apiRoute: 'takeout-parser' },
     });
 
-    // 3. Video Streaming Activity (Digital Tracker Source)
+    // 3. 4K streaming session — logged via DigitalTracker.
+    //    2 hours at 0.16 kg/hr = 0.32 kg CO2e.
     addEvent({
-      id: crypto.randomUUID(),
-      timestamp: Date.now() - 3600000 * 5,
-      source: 'digital',
-      category: 'Digital Services',
-      description: '4K Video Streaming (2 hours)',
-      rawQuantity: 2,
-      rawUnit: 'hours',
+      id:           crypto.randomUUID(),
+      timestamp:    Date.now() - 3600000 * 5,
+      source:       'digital',
+      category:     'Digital Services',
+      description:  '4K Video Streaming (2 hours)',
+      rawQuantity:  2,
+      rawUnit:      'hours',
       co2eIntensity: 0.16,
-      metadata: { apiRoute: 'digital-tracker' }
+      metadata:     { apiRoute: 'digital-tracker' },
     });
 
-    // 4. Organic Ribeye Steak (Vision Source from scanned receipt)
+    // 4. Ribeye steak — represents a receipt line item from VisionAuditor.
+    //    0.35 kg × 60 kg CO2e/kg = 21.0 kg CO2e (beef is the highest-impact food).
     addEvent({
-      id: crypto.randomUUID(),
-      timestamp: Date.now() - 3600000 * 0.5,
-      source: 'vision',
-      category: 'beef',
-      description: 'Organic Ribeye Steak',
-      rawQuantity: 0.35,
-      rawUnit: 'kg',
+      id:           crypto.randomUUID(),
+      timestamp:    Date.now() - 3600000 * 0.5,
+      source:       'vision',
+      category:     'beef',
+      description:  'Organic Ribeye Steak',
+      rawQuantity:  0.35,
+      rawUnit:      'kg',
       co2eIntensity: 60.0,
-      metadata: { confidenceScore: 0.95 }
+      metadata:     { confidenceScore: 0.95 },
     });
   };
 
-  // Micro-interaction for the arc progress dial
+  /**
+   * Synchronizes the SVG arc progress indicator with the current budget usage.
+   *
+   * The arc is drawn as a circle with r=80 in a 192×192 viewBox.
+   * Circumference = 2π × 80 ≈ 502.65 px (the full stroke length).
+   * strokeDashoffset controls how much of the stroke is "drawn":
+   * - offset = 0           → full arc (100% usage)
+   * - offset = 502.65      → empty arc (0% usage)
+   *
+   * Note: The SVG inline approach is used instead of CSS animation because
+   * the offset value depends on live store data, not a static CSS variable.
+   */
   useEffect(() => {
     const arc = document.querySelector('.arc-progress') as SVGPathElement | null;
     if (arc) {
       const circumference = 351.85;
+      // Clamp percentUsed to [0, 100] to prevent negative offsets on overflow.
       const offset = circumference - (Math.min(100, percentUsed) / 100) * circumference;
       arc.style.strokeDashoffset = String(offset);
     }
@@ -270,24 +345,45 @@ export function App() {
 
         {/* Main Content Area */}
         <main className="flex-1 ml-0 md:ml-[240px] overflow-y-auto bg-surface-base p-gutter-desktop pb-24 md:pb-12">
+          {/* ── Constrained content width: never exceeds container-max ── */}
           <div className="max-w-container-max mx-auto space-y-6">
-                    {/* VIEW 1: OVERVIEW DASHBOARD */}
+
+            {/* ════════════════════════════════════════════════════════════
+                VIEW 1: OVERVIEW DASHBOARD
+                Main user-facing dashboard. Contains:
+                  - Carbon Readiness Index (SVG arc dial)
+                  - Live Ingestion Vitals (4 category cards)
+                  - SDG Goal alignment strip
+                  - Smarter Carbon Swaps suggestions
+                  - Today's Journey event timeline
+                  - Carbon Response Forecast graph
+                  - EcoPulse Assistant chat
+                ════════════════════════════════════════════════════════════ */}
             {activeView === 'overview' && (
               <>
                 {/* Top Section: Carbon Readiness & Live Vitals */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                   
-                  {/* Left Column: Carbon Readiness Index (Col 4) */}
+                  {/* ── Left Column: Carbon Readiness Index (Col 4) ────────
+                       The main scoring dial. Counts DOWN from 100 (clean) to 0
+                       as the user approaches their 15 kg daily budget limit.
+                       SVG arc: r=80, circumference = 2π×80 ≈ 502.65 px.
+                  ────────────────────────────────────────────────────────── */}
                   <div className="lg:col-span-4">
                     <div className="bg-surface-elevated p-8 rounded-3xl border border-border-subtle flex flex-col items-center text-center shadow-sm">
                       <span className="text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-6 font-sans">Carbon Readiness</span>
                       
                       <div className="relative w-48 h-48 flex items-center justify-center">
+                        {/* Background track circle (full circumference, muted) */}
                         <svg className="w-full h-full -rotate-90" viewBox="0 0 192 192">
                           <circle className="text-surface-container" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="6"></circle>
+                          {/* Progress arc: strokeDashoffset shifts the drawn portion.
+                              Full circle (100% budget remaining) → offset=0.
+                              Budget used → offset increases, arc shrinks.        */}
                           <circle className="text-primary rounded-full transition-all duration-1000" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502.65" stroke-dashoffset={String(502.65 - (Math.min(100, Math.max(0, 100 - percentUsed)) / 100) * 502.65)} stroke-width="12" stroke-linecap="round"></circle>
                         </svg>
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          {/* Readiness score: 100 minus percent of budget used, floored at 0 */}
                           <span className="font-serif text-5xl font-light">{Math.max(0, Math.round(100 - percentUsed))}</span>
                           <span className="text-[10px] font-bold text-primary tracking-widest uppercase mt-1">
                             {percentUsed === 0 ? 'CLEAN' : percentUsed <= 50 ? 'OPTIMAL' : percentUsed <= 100 ? 'STABLE' : 'CRITICAL'}
@@ -636,7 +732,14 @@ export function App() {
               </>
             )}
 
-            {/* VIEW 2: INGEST & UPLOAD */}
+            {/* ════════════════════════════════════════════════════════════
+                VIEW 2: INGEST & UPLOAD PORTAL
+                Three expandable sub-panels:
+                  - Location History → TakeoutParser (JSON)
+                  - Bank Statement   → FinancialParser (CSV)
+                  - Digital & Manual → DigitalTracker
+                Only one panel can be open at a time (activeUploader state).
+                ════════════════════════════════════════════════════════════ */}
             {activeView === 'upload' && (
               <div className="space-y-6">
                 <div>
@@ -729,7 +832,12 @@ export function App() {
               </div>
             )}
 
-            {/* VIEW 3: RECEIPT SPLIT PANEL AUDITOR */}
+            {/* ════════════════════════════════════════════════════════════
+                VIEW 3: RECEIPT AUDITOR (Split-Panel)
+                Full-screen VisionAuditor component.
+                Left pane: image upload + scan animation.
+                Right pane: parsed line items table + commit button.
+                ════════════════════════════════════════════════════════════ */}
             {activeView === 'receipt-parser' && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -748,7 +856,16 @@ export function App() {
               </div>
             )}
 
-            {/* VIEW 4: HISTORY / YEAR IN REVIEW */}
+            {/* ════════════════════════════════════════════════════════════
+                VIEW 4: YEAR IN REVIEW / SUSTAINABILITY REPORT
+                Annual carbon ledger with:
+                  - 12-month bar chart (static demo data)
+                  - Best/Worst period badges
+                  - Asset allocation donut chart
+                  - Comparative audit vs. prior year
+                Static data is used here because historical aggregation across
+                the full ledger requires a persistence layer not yet implemented.
+                ════════════════════════════════════════════════════════════ */}
             {activeView === 'history' && (
               <div className="space-y-8">
                 <div>
@@ -926,7 +1043,10 @@ export function App() {
         </main>
       </div>
 
-      {/* Mobile Navigation Shell (bottom bar) */}
+      {/* ── Mobile Bottom Navigation Bar ─────────────────────────────────
+           Fixed to the bottom on small screens (< md breakpoint).
+           Replaces the left sidebar that is hidden on mobile.
+      ─────────────────────────────────────────────────────────────────── */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container border-t border-border-subtle flex justify-around items-center z-50">
         <button 
           onClick={() => setActiveView('overview')}
@@ -966,7 +1086,11 @@ export function App() {
         </button>
       </nav>
 
-      {/* Sticky Bottom Privacy Footer */}
+      {/* ── Privacy Footer ────────────────────────────────────────────────
+           Only visible on desktop. Reinforces the local-first privacy model
+           and shows the methodology standard (IPCC AR6 GWP vintages).
+           Offset by sidebar width (240px) to align with main content area.
+      ─────────────────────────────────────────────────────────────────── */}
       <footer className="hidden md:block w-[calc(100%-240px)] ml-[240px] py-4 border-t border-border-subtle bg-surface-container-lowest text-center">
         <div className="max-w-container-max mx-auto px-gutter-desktop flex justify-between items-center">
           <div className="flex items-center gap-3">
