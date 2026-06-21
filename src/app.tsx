@@ -858,17 +858,17 @@ export function App() {
                     <div className="flex-1 flex items-end justify-between gap-2 px-2 pb-2">
                       {[
                         { h: '45%', month: 'JAN', color: 'bg-success-neon' },
-                        { h: '52%', month: 'FEB', color: 'bg-[#8AFF33]' },
-                        { h: '58%', month: 'MAR', color: 'bg-[#B2FF33]' },
-                        { h: '38%', month: 'APR', color: 'bg-success-neon shadow-[0_0_15px_rgba(57,255,20,0.3)]', active: true },
-                        { h: '65%', month: 'MAY', color: 'bg-[#E0FF33]' },
-                        { h: '72%', month: 'JUN', color: 'bg-[#FFF333]' },
-                        { h: '80%', month: 'JUL', color: 'bg-[#FFD433]' },
-                        { h: '75%', month: 'AUG', color: 'bg-[#FFAE33]' },
-                        { h: '85%', month: 'SEP', color: 'bg-[#FF8833]' },
-                        { h: '88%', month: 'OCT', color: 'bg-[#FF6233]' },
-                        { h: '92%', month: 'NOV', color: 'bg-[#FF4533]' },
-                        { h: '100%', month: 'DEC', color: 'bg-error-flash shadow-[0_0_15px_rgba(255,49,49,0.3)]', active: true }
+                        { h: '52%', month: 'FEB', color: 'bg-[#3A7C5C]' },
+                        { h: '58%', month: 'MAR', color: 'bg-secondary' },
+                        { h: '38%', month: 'APR', color: 'bg-success-neon shadow-[0_0_15px_rgba(45,106,79,0.25)]', active: true },
+                        { h: '65%', month: 'MAY', color: 'bg-[#679B5E]' },
+                        { h: '72%', month: 'JUN', color: 'bg-[#8EA64B]' },
+                        { h: '80%', month: 'JUL', color: 'bg-tertiary' },
+                        { h: '75%', month: 'AUG', color: 'bg-[#D6A123]' },
+                        { h: '85%', month: 'SEP', color: 'bg-[#DC882E]' },
+                        { h: '88%', month: 'OCT', color: 'bg-[#D56B30]' },
+                        { h: '92%', month: 'NOV', color: 'bg-[#D14F30]' },
+                        { h: '100%', month: 'DEC', color: 'bg-error-flash shadow-[0_0_15px_rgba(211,47,47,0.25)]', active: true }
                       ].map((bar, i) => (
                         <div key={i} className={`group relative flex-1 flex flex-col justify-end h-full transition-transform ${bar.active ? 'scale-105' : ''}`}>
                           <div 
@@ -916,9 +916,9 @@ export function App() {
                         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                           <circle className="stroke-outline-variant" cx="18" cy="18" fill="none" r="16" stroke-width="3.5"></circle>
                           <circle className="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="45, 100" stroke-dashoffset="0" stroke-width="3.5"></circle>
-                          <circle className="stroke-secondary-container" cx="18" cy="18" fill="none" r="16" stroke-dasharray="25, 100" stroke-dashoffset="-45" stroke-width="3.5"></circle>
-                          <circle className="stroke-tertiary-container" cx="18" cy="18" fill="none" r="16" stroke-dasharray="20, 100" stroke-dashoffset="-70" stroke-width="3.5"></circle>
-                          <circle className="stroke-on-surface-variant" cx="18" cy="18" fill="none" r="16" stroke-dasharray="10, 100" stroke-dashoffset="-90" stroke-width="3.5"></circle>
+                          <circle className="stroke-secondary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="25, 100" stroke-dashoffset="-45" stroke-width="3.5"></circle>
+                          <circle className="stroke-tertiary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="20, 100" stroke-dashoffset="-70" stroke-width="3.5"></circle>
+                          <circle className="stroke-outline" cx="18" cy="18" fill="none" r="16" stroke-dasharray="10, 100" stroke-dashoffset="-90" stroke-width="3.5"></circle>
                         </svg>
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
                           <span className="font-mono-azeret text-[24px] font-bold text-primary">12.4t</span>
@@ -933,15 +933,15 @@ export function App() {
                         <span className="text-on-surface-variant">Travel (45%)</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
-                        <div className="w-2.5 h-2.5 rounded-full bg-secondary-container"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-secondary"></div>
                         <span className="text-on-surface-variant">Food (25%)</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
-                        <div className="w-2.5 h-2.5 rounded-full bg-tertiary-container"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-tertiary"></div>
                         <span className="text-on-surface-variant">Finance (20%)</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
-                        <div className="w-2.5 h-2.5 rounded-full bg-on-surface-variant"></div>
+                        <div className="w-2.5 h-2.5 rounded-full bg-outline"></div>
                         <span className="text-on-surface-variant">Others (10%)</span>
                       </div>
                     </div>
