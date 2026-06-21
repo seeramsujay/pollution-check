@@ -40,8 +40,7 @@ export function App() {
   const getDailyTotal = useCarbonStore((state) => state.getDailyTotal);
 
   // Active view states
-  const [activeView, setActiveView] = useState<'overview' | 'upload' | 'receipt-parser' | 'history'>('overview');
-  const [activeUploader, setActiveUploader] = useState<'none' | 'location' | 'bank' | 'digital'>('none');
+  const [activeView, setActiveView] = useState<'overview' | 'breakdown' | 'travel' | 'food' | 'finance' | 'history'>('overview');
   const [darkMode, setDarkMode] = useState(true);
 
   // Carbon budget calculations
@@ -284,7 +283,7 @@ export function App() {
           </div>
           <div className="flex-1 px-3 space-y-1">
             <button 
-              onClick={() => { setActiveView('overview'); setActiveUploader('none'); }}
+              onClick={() => setActiveView('overview')}
               className={`flex items-center gap-3 w-full px-4 py-3 rounded text-left transition-all ${
                 activeView === 'overview' 
                   ? 'text-primary bg-surface-container-high border-r-2 border-primary scale-[0.98]' 
@@ -296,31 +295,55 @@ export function App() {
               <span className="font-label-md text-label-md">Overview</span>
             </button>
             <button 
-              onClick={() => { setActiveView('upload'); }}
+              onClick={() => setActiveView('breakdown')}
               className={`flex items-center gap-3 w-full px-4 py-3 rounded text-left transition-all ${
-                activeView === 'upload' 
+                activeView === 'breakdown' 
                   ? 'text-primary bg-surface-container-high border-r-2 border-primary scale-[0.98]' 
                   : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
               }`}
-              aria-current={activeView === 'upload' ? 'page' : undefined}
+              aria-current={activeView === 'breakdown' ? 'page' : undefined}
             >
-              <span className="material-symbols-outlined" aria-hidden="true">publish</span>
-              <span className="font-label-md text-label-md">Ingest & Upload</span>
+              <span className="material-symbols-outlined" aria-hidden="true">analytics</span>
+              <span className="font-label-md text-label-md">Breakdown</span>
             </button>
             <button 
-              onClick={() => { setActiveView('receipt-parser'); }}
+              onClick={() => setActiveView('travel')}
               className={`flex items-center gap-3 w-full px-4 py-3 rounded text-left transition-all ${
-                activeView === 'receipt-parser' 
+                activeView === 'travel' 
                   ? 'text-primary bg-surface-container-high border-r-2 border-primary scale-[0.98]' 
                   : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
               }`}
-              aria-current={activeView === 'receipt-parser' ? 'page' : undefined}
+              aria-current={activeView === 'travel' ? 'page' : undefined}
             >
-              <span className="material-symbols-outlined" aria-hidden="true">receipt_long</span>
-              <span className="font-label-md text-label-md">Receipt Auditor</span>
+              <span className="material-symbols-outlined" aria-hidden="true">directions_run</span>
+              <span className="font-label-md text-label-md">Travel</span>
             </button>
             <button 
-              onClick={() => { setActiveView('history'); }}
+              onClick={() => setActiveView('food')}
+              className={`flex items-center gap-3 w-full px-4 py-3 rounded text-left transition-all ${
+                activeView === 'food' 
+                  ? 'text-primary bg-surface-container-high border-r-2 border-primary scale-[0.98]' 
+                  : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
+              }`}
+              aria-current={activeView === 'food' ? 'page' : undefined}
+            >
+              <span className="material-symbols-outlined" aria-hidden="true">restaurant</span>
+              <span className="font-label-md text-label-md">Food</span>
+            </button>
+            <button 
+              onClick={() => setActiveView('finance')}
+              className={`flex items-center gap-3 w-full px-4 py-3 rounded text-left transition-all ${
+                activeView === 'finance' 
+                  ? 'text-primary bg-surface-container-high border-r-2 border-primary scale-[0.98]' 
+                  : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
+              }`}
+              aria-current={activeView === 'finance' ? 'page' : undefined}
+            >
+              <span className="material-symbols-outlined" aria-hidden="true">payments</span>
+              <span className="font-label-md text-label-md">Finance</span>
+            </button>
+            <button 
+              onClick={() => setActiveView('history')}
               className={`flex items-center gap-3 w-full px-4 py-3 rounded text-left transition-all ${
                 activeView === 'history' 
                   ? 'text-primary bg-surface-container-high border-r-2 border-primary scale-[0.98]' 
@@ -329,7 +352,7 @@ export function App() {
               aria-current={activeView === 'history' ? 'page' : undefined}
             >
               <span className="material-symbols-outlined" aria-hidden="true">history</span>
-              <span className="font-label-md text-label-md">Year in Review</span>
+              <span className="font-label-md text-label-md">History</span>
             </button>
           </div>
           <div className="px-6 mt-auto">
@@ -413,17 +436,20 @@ export function App() {
                     <div className="flex justify-between items-center px-2">
                       <h3 className="text-[10px] font-bold tracking-widest text-on-surface-variant uppercase font-sans">Carbon Ingestion Vitals</h3>
                       <button 
-                        onClick={() => setActiveView('upload')}
+                        onClick={() => setActiveView('breakdown')}
                         className="text-xs font-bold text-primary flex items-center gap-1 hover:underline bg-primary/5 px-3 py-1.5 rounded-lg transition-all cursor-pointer"
                       >
-                        <span className="material-symbols-outlined text-[14px]">publish</span>
-                        Ingest Portal
+                        <span className="material-symbols-outlined text-[14px]">analytics</span>
+                        View Breakdown
                       </button>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Vitals Card 1: Travel */}
-                      <div className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 transition-all shadow-sm">
+                      <div 
+                        onClick={() => setActiveView('travel')}
+                        className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 hover:scale-[1.01] transition-all shadow-sm cursor-pointer animate-fade-in"
+                      >
                         <div className="flex justify-between items-start">
                           <span className="material-symbols-outlined text-primary">directions_run</span>
                           <span className="text-[9px] font-bold text-primary uppercase font-sans">{travelPercent}% of total</span>
@@ -440,7 +466,10 @@ export function App() {
                       </div>
 
                       {/* Vitals Card 2: Diet */}
-                      <div className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 transition-all shadow-sm">
+                      <div 
+                        onClick={() => setActiveView('food')}
+                        className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 hover:scale-[1.01] transition-all shadow-sm cursor-pointer animate-fade-in"
+                      >
                         <div className="flex justify-between items-start">
                           <span className="material-symbols-outlined text-primary">restaurant</span>
                           <span className="text-[9px] font-bold text-primary uppercase font-sans">{foodPercent}% of total</span>
@@ -457,7 +486,10 @@ export function App() {
                       </div>
 
                       {/* Vitals Card 3: Digital */}
-                      <div className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 transition-all shadow-sm">
+                      <div 
+                        onClick={() => setActiveView('breakdown')}
+                        className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 hover:scale-[1.01] transition-all shadow-sm cursor-pointer animate-fade-in"
+                      >
                         <div className="flex justify-between items-start">
                           <span className="material-symbols-outlined text-primary">devices</span>
                           <span className="text-[9px] font-bold text-primary uppercase font-sans">Stable</span>
@@ -474,7 +506,10 @@ export function App() {
                       </div>
 
                       {/* Vitals Card 4: Financial */}
-                      <div className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 transition-all shadow-sm">
+                      <div 
+                        onClick={() => setActiveView('finance')}
+                        className="bg-surface-elevated p-6 rounded-2xl border border-border-subtle flex flex-col justify-between h-44 group hover:border-primary/40 hover:scale-[1.01] transition-all shadow-sm cursor-pointer animate-fade-in"
+                      >
                         <div className="flex justify-between items-start">
                           <span className="material-symbols-outlined text-primary">payments</span>
                           <span className="text-[9px] font-bold text-primary uppercase font-sans">{financePercent}% of total</span>
@@ -618,7 +653,7 @@ export function App() {
                   </div>
                 </section>
 
-                {/* Bottom Section: Timeline Journey & Forecast */}
+                {/* Bottom Section: Timeline Journey & EcoPulse Assistant */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                   {/* Left Bottom Column: Today's Journey (Col 5) */}
                   <div className="lg:col-span-5 space-y-6">
@@ -654,8 +689,38 @@ export function App() {
                     </div>
                   </div>
 
-                  {/* Right Bottom Column: Response Forecast (Col 7) */}
-                  <div className="lg:col-span-7 bg-surface-elevated p-8 rounded-3xl border border-border-subtle shadow-sm flex flex-col justify-between">
+                  {/* Right Bottom Column: Assistant Chat (Col 7) */}
+                  <div className="lg:col-span-7">
+                    <Assistant />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* ════════════════════════════════════════════════════════════
+                VIEW 2: DETAILED EMISSIONS BREAKDOWN
+                Renders:
+                  - Vitals category grids
+                  - Digital and manual log tracker (DigitalTracker)
+                  - Response Forecast graph (moved from overview to reduce density)
+                ════════════════════════════════════════════════════════════ */}
+            {activeView === 'breakdown' && (
+              <div className="space-y-8">
+                <div>
+                  <h2 className="font-serif text-3xl font-bold text-primary">Emissions Breakdown & Digital Audit</h2>
+                  <p className="font-body-md text-on-surface-variant text-sm mt-1">
+                    Analyze specific emission centers and log manual or cloud usage stats.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                  {/* Digital Tracker (Col 7) */}
+                  <div className="lg:col-span-7">
+                    <DigitalTracker />
+                  </div>
+
+                  {/* Carbon Velocity Graph (Col 5) */}
+                  <div className="lg:col-span-5 bg-surface-elevated p-8 rounded-3xl border border-border-subtle shadow-sm flex flex-col justify-between min-h-[360px]">
                     <div className="flex justify-between items-start mb-6">
                       <div>
                         <h3 className="font-serif text-xl font-bold text-primary">Carbon Response Forecast</h3>
@@ -668,7 +733,7 @@ export function App() {
                     </div>
                     
                     {/* Simulated Graph Lines */}
-                    <div className="h-28 flex items-end gap-1 relative border-b border-border-subtle pb-1">
+                    <div className="h-44 flex items-end gap-1 relative border-b border-border-subtle pb-1">
                       <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
                         <div className="border-t border-on-surface w-full"></div>
                         <div className="border-t border-on-surface w-full"></div>
@@ -692,166 +757,59 @@ export function App() {
                     </div>
                   </div>
                 </div>
-
-                {/* Bottom Action Strip Banner */}
-                <div className="bg-primary-container p-8 rounded-[2rem] flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden border border-border-subtle">
-                  <div className="relative z-10">
-                    <h2 className="font-serif text-2xl font-bold text-primary">Capture your footprint.</h2>
-                    <p className="text-on-surface-variant max-w-sm text-xs mt-2 leading-relaxed">Log your local digital artifacts and files offline for absolute carbon privacy auditing.</p>
-                  </div>
-                  <div className="flex flex-wrap gap-4 relative z-10">
-                    <button 
-                      onClick={() => setActiveView('receipt-parser')}
-                      className="bg-surface-elevated hover:bg-surface border border-border-subtle text-primary px-5 py-3 rounded-2xl flex items-center gap-3 shadow-sm hover:scale-105 transition-all font-bold text-xs cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-primary">photo_camera</span>
-                      Scan Receipt
-                    </button>
-                    <button 
-                      onClick={() => { setActiveView('upload'); setActiveUploader('location'); }}
-                      className="bg-surface-elevated hover:bg-surface border border-border-subtle text-primary px-5 py-3 rounded-2xl flex items-center gap-3 shadow-sm hover:scale-105 transition-all font-bold text-xs cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-primary">cloud_upload</span>
-                      Import Takeout
-                    </button>
-                    <button 
-                      onClick={() => { setActiveView('upload'); setActiveUploader('digital'); }}
-                      className="bg-surface-elevated hover:bg-surface border border-border-subtle text-primary px-5 py-3 rounded-2xl flex items-center gap-3 shadow-sm hover:scale-105 transition-all font-bold text-xs cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-primary">search</span>
-                      Manual Log
-                    </button>
-                  </div>
-                  <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
-                </div>
-
-                {/* Context-Aware Assistant Section */}
-                <section className="mt-8">
-                  <Assistant />
-                </section>
-              </>
+              </div>
             )}
 
             {/* ════════════════════════════════════════════════════════════
-                VIEW 2: INGEST & UPLOAD PORTAL
-                Three expandable sub-panels:
-                  - Location History → TakeoutParser (JSON)
-                  - Bank Statement   → FinancialParser (CSV)
-                  - Digital & Manual → DigitalTracker
-                Only one panel can be open at a time (activeUploader state).
+                VIEW 3: GOOGLE TAKEOUT LOCATION TRAVEL AUDITOR
+                Renders TakeoutParser component directly.
                 ════════════════════════════════════════════════════════════ */}
-            {activeView === 'upload' && (
+            {activeView === 'travel' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="font-headline-md text-headline-md text-primary font-bold">Data Ingest Portal</h2>
+                  <h2 className="font-serif text-3xl font-bold text-primary">Travel Auditor</h2>
                   <p className="font-body-md text-on-surface-variant text-sm mt-1">
-                    Select an ingestion feed to parse digital artifacts locally. All calculations run client-side to safeguard your privacy.
+                    Upload your Google Location History (Semantic Location History) JSON. Travel segments are parsed, filtered, and aggregated with zero cloud telemetry.
                   </p>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Location Card */}
-                  <div 
-                    onClick={() => setActiveUploader(activeUploader === 'location' ? 'none' : 'location')}
-                    className={`upload-dashed group transition-all duration-300 p-8 flex flex-col items-center justify-center text-center cursor-pointer min-h-[280px] rounded-xl bg-surface-container/20 border border-transparent ${
-                      activeUploader === 'location' ? 'border-primary-fixed-dim bg-primary/5' : 'hover:bg-surface-container/30'
-                    }`}
-                  >
-                    <div className="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-6 border border-border-subtle group-hover:border-primary-fixed-dim transition-colors">
-                      <span className="material-symbols-outlined text-primary-fixed-dim text-3xl">location_on</span>
-                    </div>
-                    <h3 className="font-headline-md text-headline-md mb-2 font-bold">Location History</h3>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant mb-6 px-4">
-                      Import Google Takeout Semantic Location History JSON.
-                    </p>
-                    <button className="font-label-md text-label-md border border-primary text-primary px-6 py-2 hover:bg-primary hover:text-surface-base transition-all">
-                      {activeUploader === 'location' ? 'Close Panel' : 'Open Auditor'}
-                    </button>
-                  </div>
-
-                  {/* Bank CSV Card */}
-                  <div 
-                    onClick={() => setActiveUploader(activeUploader === 'bank' ? 'none' : 'bank')}
-                    className={`upload-dashed group transition-all duration-300 p-8 flex flex-col items-center justify-center text-center cursor-pointer min-h-[280px] rounded-xl bg-surface-container/20 border border-transparent ${
-                      activeUploader === 'bank' ? 'border-primary-fixed-dim bg-primary/5' : 'hover:bg-surface-container/30'
-                    }`}
-                  >
-                    <div className="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-6 border border-border-subtle group-hover:border-primary-fixed-dim transition-colors">
-                      <span className="material-symbols-outlined text-primary-fixed-dim text-3xl">account_balance</span>
-                    </div>
-                    <h3 className="font-headline-md text-headline-md mb-2 font-bold">Bank Statement</h3>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant mb-6 px-4">
-                      CSV bank export. Matches transactions to category carbon indexes.
-                    </p>
-                    <button className="font-label-md text-label-md border border-primary text-primary px-6 py-2 hover:bg-primary hover:text-surface-base transition-all">
-                      {activeUploader === 'bank' ? 'Close Panel' : 'Open Auditor'}
-                    </button>
-                  </div>
-
-                  {/* Digital & Manual Card */}
-                  <div 
-                    onClick={() => setActiveUploader(activeUploader === 'digital' ? 'none' : 'digital')}
-                    className={`upload-dashed group transition-all duration-300 p-8 flex flex-col items-center justify-center text-center cursor-pointer min-h-[280px] rounded-xl bg-surface-container/20 border border-transparent ${
-                      activeUploader === 'digital' ? 'border-primary-fixed-dim bg-primary/5' : 'hover:bg-surface-container/30'
-                    }`}
-                  >
-                    <div className="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-6 border border-border-subtle group-hover:border-primary-fixed-dim transition-colors">
-                      <span className="material-symbols-outlined text-primary-fixed-dim text-3xl">laptop_mac</span>
-                    </div>
-                    <h3 className="font-headline-md text-headline-md mb-2 font-bold">Digital & Manual</h3>
-                    <p className="font-body-sm text-body-sm text-on-surface-variant mb-6 px-4">
-                      Calculate streaming outputs and log manual carbon entries.
-                    </p>
-                    <button className="font-label-md text-label-md border border-primary text-primary px-6 py-2 hover:bg-primary hover:text-surface-base transition-all">
-                      {activeUploader === 'digital' ? 'Close Panel' : 'Open Auditor'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Subpanel display for active ingest parser */}
-                {activeUploader !== 'none' && (
-                  <div className="mt-8 pt-4 border-t border-border-subtle transition-all duration-300">
-                    {activeUploader === 'location' && <TakeoutParser />}
-                    {activeUploader === 'bank' && <FinancialParser />}
-                    {activeUploader === 'digital' && <DigitalTracker />}
-                  </div>
-                )}
-
-                {/* Local computing disclaimer */}
-                <div className="relative w-full rounded-xl overflow-hidden border border-border-subtle bg-surface-container/10 p-8 flex items-center gap-6 mt-8">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 text-primary">
-                    <span className="material-symbols-outlined text-2xl">shield_lock</span>
-                  </div>
-                  <div>
-                    <h3 className="text-md font-bold text-primary">WASM Local Compute Sandbox</h3>
-                    <p className="text-xs text-on-surface-variant mt-1 max-w-2xl">
-                      EcoPulse does not upload files to cloud datastores. Location JSONs, statement CSVs, and data streams are analyzed strictly within sandbox memory, keeping files confidential and offline.
-                    </p>
-                  </div>
+                <div className="bg-surface-elevated border border-border-subtle rounded-xl p-8 shadow-sm">
+                  <TakeoutParser />
                 </div>
               </div>
             )}
 
             {/* ════════════════════════════════════════════════════════════
-                VIEW 3: RECEIPT AUDITOR (Split-Panel)
-                Full-screen VisionAuditor component.
-                Left pane: image upload + scan animation.
-                Right pane: parsed line items table + commit button.
+                VIEW 4: FOOD OCR RECEIPT AUDITOR
+                Renders split-screen VisionAuditor component directly.
                 ════════════════════════════════════════════════════════════ */}
-            {activeView === 'receipt-parser' && (
+            {activeView === 'food' && (
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="font-headline-md text-headline-md text-primary font-bold">Split-Screen Receipt Auditor</h2>
-                    <p className="font-body-md text-on-surface-variant text-sm mt-1">
-                      Upload photo scans. Compresses image client-side to downscale payload and routes it for OCR.
-                    </p>
-                  </div>
+                <div>
+                  <h2 className="font-serif text-3xl font-bold text-primary">Receipt Auditor</h2>
+                  <p className="font-body-md text-on-surface-variant text-sm mt-1">
+                    Upload photo scans. Compresses image client-side to downscale payload and routes it for local-first OCR itemization.
+                  </p>
                 </div>
-
                 <div className="bg-surface-elevated border border-border-subtle rounded-xl overflow-hidden shadow-2xl">
-                  {/* Render the full VisionAuditor UI here directly */}
                   <VisionAuditor />
+                </div>
+              </div>
+            )}
+
+            {/* ════════════════════════════════════════════════════════════
+                VIEW 5: FINANCIAL BANK CSV STATEMENT AUDITOR
+                Renders FinancialParser component directly.
+                ════════════════════════════════════════════════════════════ */}
+            {activeView === 'finance' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="font-serif text-3xl font-bold text-primary">Financial Statement Auditor</h2>
+                  <p className="font-body-md text-on-surface-variant text-sm mt-1">
+                    Audit bank transaction CSV statements. The parser automatically matches merchant categories and maps transactions to Supply Chain carbon emission indices.
+                  </p>
+                </div>
+                <div className="bg-surface-elevated border border-border-subtle rounded-xl p-8 shadow-sm">
+                  <FinancialParser />
                 </div>
               </div>
             )}
@@ -1047,43 +1005,27 @@ export function App() {
            Fixed to the bottom on small screens (< md breakpoint).
            Replaces the left sidebar that is hidden on mobile.
       ─────────────────────────────────────────────────────────────────── */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container border-t border-border-subtle flex justify-around items-center z-50">
-        <button 
-          onClick={() => setActiveView('overview')}
-          className={`flex flex-col items-center bg-transparent border-none cursor-pointer ${
-            activeView === 'overview' ? 'text-primary' : 'text-on-surface-variant'
-          }`}
-        >
-          <span className="material-symbols-outlined">dashboard</span>
-          <span className="text-[10px] font-label-md">Overview</span>
-        </button>
-        <button 
-          onClick={() => setActiveView('upload')}
-          className={`flex flex-col items-center bg-transparent border-none cursor-pointer ${
-            activeView === 'upload' ? 'text-primary' : 'text-on-surface-variant'
-          }`}
-        >
-          <span className="material-symbols-outlined">publish</span>
-          <span className="text-[10px] font-label-md">Ingest</span>
-        </button>
-        <button 
-          onClick={() => setActiveView('receipt-parser')}
-          className={`flex flex-col items-center bg-transparent border-none cursor-pointer ${
-            activeView === 'receipt-parser' ? 'text-primary' : 'text-on-surface-variant'
-          }`}
-        >
-          <span className="material-symbols-outlined">receipt_long</span>
-          <span className="text-[10px] font-label-md">Auditor</span>
-        </button>
-        <button 
-          onClick={() => setActiveView('history')}
-          className={`flex flex-col items-center bg-transparent border-none cursor-pointer ${
-            activeView === 'history' ? 'text-primary' : 'text-on-surface-variant'
-          }`}
-        >
-          <span className="material-symbols-outlined">history</span>
-          <span className="text-[10px] font-label-md">History</span>
-        </button>
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface-container border-t border-border-subtle flex justify-around items-center z-50 px-2" aria-label="Mobile Navigation">
+        {[
+          { id: 'overview', icon: 'dashboard', label: 'Overview' },
+          { id: 'breakdown', icon: 'analytics', label: 'Breakdown' },
+          { id: 'travel', icon: 'directions_run', label: 'Travel' },
+          { id: 'food', icon: 'restaurant', label: 'Food' },
+          { id: 'finance', icon: 'payments', label: 'Finance' },
+          { id: 'history', icon: 'history', label: 'History' }
+        ].map((item) => (
+          <button 
+            key={item.id}
+            onClick={() => setActiveView(item.id as any)}
+            className={`flex flex-col items-center bg-transparent border-none cursor-pointer transition-all ${
+              activeView === item.id ? 'text-primary' : 'text-on-surface-variant font-light'
+            }`}
+            aria-current={activeView === item.id ? 'page' : undefined}
+          >
+            <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+            <span className="text-[9px] font-label-sm tracking-tight">{item.label}</span>
+          </button>
+        ))}
       </nav>
 
       {/* ── Privacy Footer ────────────────────────────────────────────────

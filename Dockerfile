@@ -1,7 +1,7 @@
 # Stage 1: Build the static website
 FROM node:20-alpine AS build
 WORKDIR /app
-RUN npm install -g pnpm
+RUN corepack enable && corepack prepare pnpm@9.4.0 --activate
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
