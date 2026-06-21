@@ -20,8 +20,11 @@ import { create } from 'zustand';
  * - `vision`    → Receipt photo scanned via VisionAuditor (OCR)
  * - `financial` → Bank statement row parsed via FinancialParser (CSV)
  * - `digital`   → Network/streaming/manual log via DigitalTracker
+ * - `travel`    → Location history segments parsed via TakeoutParser
+ * - `food`      → Receipt items parsed via VisionAuditor
+ * - `finance`   → Transactions parsed via FinancialParser
  */
-export type CarbonSourceType = 'vision' | 'financial' | 'digital';
+export type CarbonSourceType = 'vision' | 'financial' | 'digital' | 'travel' | 'food' | 'finance';
 
 /**
  * Physical units associated with `rawQuantity`.
@@ -29,8 +32,9 @@ export type CarbonSourceType = 'vision' | 'financial' | 'digital';
  * - `usd`   → Dollar spend (financial statement)
  * - `gb`    → Gigabytes of network data transferred
  * - `hours` → Duration of a digital service (streaming, conferencing)
+ * - `km`    → Distance in kilometers (travel segments)
  */
-export type CarbonUnitType = 'kg' | 'usd' | 'gb' | 'hours';
+export type CarbonUnitType = 'kg' | 'usd' | 'gb' | 'hours' | 'km';
 
 /**
  * Represents a single carbon-emitting activity that has been audited and

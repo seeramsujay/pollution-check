@@ -47,7 +47,7 @@ export function Assistant() {
     let msg = `Welcome to your EcoPulse Carbon Assistant. I am auditing your live local ledger in real-time. `;
     
     if (events.length === 0) {
-      return msg + "Currently, your ledger is empty. Go to the Ingest tab to upload location Takeout logs, bank statement CSVs, or snap grocery receipt photos so I can begin optimization.";
+      return msg + "Currently, your ledger is empty. Go to the Travel, Food, or Finance tabs to upload location Takeout logs, bank statement CSVs, or snap grocery receipt photos so I can begin optimization.";
     }
 
     if (spentToday === 0) {
@@ -155,7 +155,7 @@ export function Assistant() {
 
     if (query.includes('action') || query.includes('plan') || query.includes('recommend') || query.includes('reduce') || query.includes('help')) {
       if (events.length === 0) {
-        return "To generate a custom environmental action plan, I need some data! Please use the Ingest tab to import files first.";
+        return "To generate a custom environmental action plan, I need some data! Please use the Travel, Food, or Finance tabs to import files first.";
       }
 
       let plan = "### EcoPulse Environmental Action Plan 🌿\n\n";

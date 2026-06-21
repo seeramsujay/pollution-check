@@ -73,11 +73,11 @@ export function TakeoutParser() {
         return {
           id: crypto.randomUUID(),
           timestamp: Date.parse(receipt.timestamp) || Date.now(),
-          source: 'digital',
+          source: 'travel',
           category: 'Transport',
           description: `Travel: ${formatActivityType(receipt.type)}`,
           rawQuantity: distanceKm,
-          rawUnit: 'kg',
+          rawUnit: 'km',
           co2eIntensity: intensity,
           totalCo2e: receipt.emissionsKg,
           metadata: {

@@ -83,14 +83,14 @@ export function App() {
 
       const cat = evt.category.toLowerCase();
 
-      // Travel: covers all ground transport, aviation, and ride-sharing categories.
-      if (['transport', 'transport (fuel)', 'ride sharing', 'aviation travel', 'travel'].includes(cat)) {
+      // Travel: covers all ground transport, aviation, and ride-sharing categories or travel source.
+      if (evt.source === 'travel' || ['transport', 'transport (fuel)', 'ride sharing', 'aviation travel', 'travel'].includes(cat)) {
         travel += evt.totalCo2e;
-      // Food: covers all diet-related categories from VisionAuditor and financial matching.
-      } else if (['groceries', 'dining out', 'beef', 'lamb', 'cheese', 'pork', 'poultry', 'rice', 'avocados', 'bread', 'peas', 'milk', 'vegetables', 'food'].includes(cat)) {
+      // Food: covers all diet-related categories from VisionAuditor and financial matching or food source.
+      } else if (evt.source === 'food' || ['groceries', 'dining out', 'beef', 'lamb', 'cheese', 'pork', 'poultry', 'rice', 'avocados', 'bread', 'peas', 'milk', 'vegetables', 'food'].includes(cat)) {
         food += evt.totalCo2e;
       // Finance: any spend-based event that doesn't match a travel/food category above.
-      } else if (evt.source === 'financial') {
+      } else if (evt.source === 'financial' || evt.source === 'finance') {
         finance += evt.totalCo2e;
       // Other: digital services, manual logs, AI query overhead.
       } else {
@@ -136,7 +136,7 @@ export function App() {
     addEvent({
       id:           crypto.randomUUID(),
       timestamp:    Date.now() - 3600000 * 1.5,
-      source:       'financial',
+      source:       'finance',
       category:     'Groceries',
       description:  'Trader Joes Store #541',
       rawQuantity:  25.00,
@@ -150,11 +150,11 @@ export function App() {
     addEvent({
       id:           crypto.randomUUID(),
       timestamp:    Date.now() - 3600000 * 3,
-      source:       'digital',
+      source:       'travel',
       category:     'Transport',
       description:  'Travel: Transit Train',
       rawQuantity:  45.0,
-      rawUnit:      'kg',
+      rawUnit:      'km',
       co2eIntensity: 0.03546,
       metadata:     { apiRoute: 'takeout-parser' },
     });
@@ -178,7 +178,7 @@ export function App() {
     addEvent({
       id:           crypto.randomUUID(),
       timestamp:    Date.now() - 3600000 * 0.5,
-      source:       'vision',
+      source:       'food',
       category:     'beef',
       description:  'Organic Ribeye Steak',
       rawQuantity:  0.35,
@@ -663,7 +663,7 @@ export function App() {
                         events.slice(0, 3).map((evt) => (
                           <div key={evt.id} className="flex items-center gap-4 bg-surface-elevated border border-border-subtle p-4 rounded-2xl shadow-sm">
                             <div className="w-12 h-12 rounded-xl bg-primary-container/30 text-primary flex items-center justify-center text-lg">
-                              {evt.source === 'vision' ? '📸' : evt.source === 'financial' ? '💳' : '⚡'}
+                              {evt.source === 'vision' || evt.source === 'food' ? '📸' : evt.source === 'financial' || evt.source === 'finance' ? '💳' : evt.source === 'travel' ? '🧭' : '⚡'}
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-[9px] font-bold text-primary uppercase tracking-widest font-sans">{evt.category}</p>

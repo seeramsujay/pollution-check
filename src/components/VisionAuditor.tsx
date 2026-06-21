@@ -122,7 +122,7 @@ export function VisionAuditor() {
       addEvent({
         id: crypto.randomUUID(),
         timestamp: Date.now(),
-        source: 'vision',
+        source: 'food',
         category: foodItem.category,
         description: foodItem.item,
         rawQuantity: foodItem.quantity_kg,

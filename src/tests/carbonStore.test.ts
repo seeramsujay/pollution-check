@@ -20,11 +20,11 @@ import { useCarbonStore } from '../store/carbonStore';
 function makeEvent(overrides: {
   id?: string;
   timestamp?: number;
-  source?: 'financial' | 'digital' | 'vision';
+  source?: 'financial' | 'digital' | 'vision' | 'travel' | 'food' | 'finance';
   category?: string;
   description?: string;
   rawQuantity?: number;
-  rawUnit?: 'usd' | 'kg' | 'gb' | 'hours';
+  rawUnit?: 'usd' | 'kg' | 'gb' | 'hours' | 'km';
   co2eIntensity?: number;
   metadata?: Record<string, unknown>;
 } = {}) {

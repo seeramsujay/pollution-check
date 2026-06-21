@@ -170,9 +170,9 @@ describe('parseFinancialCSV', () => {
   // ── Event Field Correctness ───────────────────────────────────────────────────
 
   describe('output event fields', () => {
-    it('should always set source = "financial" and rawUnit = "usd"', () => {
+    it('should always set source = "finance" and rawUnit = "usd"', () => {
       const events = parseFinancialCSV(`date,description,amount\n2024-06-20,Trader Joes,25.00`);
-      expect(events[0].source).toBe('financial');
+      expect(events[0].source).toBe('finance');
       expect(events[0].rawUnit).toBe('usd');
     });
 

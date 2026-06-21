@@ -130,7 +130,7 @@ export function parseFinancialCSV(csvText: string): CarbonEvent[] {
     events.push({
       id:           crypto.randomUUID(),
       timestamp,
-      source:       'financial',
+      source:       'finance',
       category:     mapMeta.category,
       description:  rawDesc,
       rawQuantity:  rawAmount,
