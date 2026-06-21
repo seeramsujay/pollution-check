@@ -127,7 +127,8 @@ export function TakeoutParser() {
   };
 
   return (
-    <div className="bg-surface-elevated border border-border-subtle rounded-xl p-6 transition-all duration-300">
+    <section aria-label="Google Takeout location history auditor">
+      <div className="bg-surface-elevated border border-border-subtle rounded-xl p-6 transition-all duration-300">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="font-headline-md text-headline-md text-primary flex items-center gap-2 font-bold">
@@ -136,7 +137,7 @@ export function TakeoutParser() {
             </span>
             Google Takeout Location Auditor
           </h2>
-          <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
+          <p id="takeout-format-hint" className="font-body-sm text-body-sm text-on-surface-variant mt-1">
             Audit your travel footprint by importing Google Takeout Semantic Location History JSON.
           </p>
         </div>
@@ -155,6 +156,7 @@ export function TakeoutParser() {
         tabIndex={0}
         role="button"
         aria-label="Upload Google Takeout location semantic monthly history in JSON format"
+        aria-describedby="takeout-format-hint takeout-file-hint"
         className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
           dragActive
             ? 'border-primary bg-primary/5'
@@ -179,7 +181,7 @@ export function TakeoutParser() {
             <p className="font-label-md text-label-md font-semibold text-on-surface">
               Drag & drop Semantic JSON or <span className="text-primary underline hover:text-primary-fixed-dim">browse</span>
             </p>
-            <p className="font-label-sm text-[10px] text-on-surface-variant mt-1">
+            <p id="takeout-file-hint" className="font-label-sm text-[10px] text-on-surface-variant mt-1">
               Select your monthly Location History JSON (e.g. 2026_JANUARY.json)
             </p>
           </div>
@@ -195,8 +197,12 @@ export function TakeoutParser() {
       {previewEvents.length > 0 && (
         <div className="mt-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
-              Preview Ingestion ({previewEvents.length} trips)
+            <h3 
+              className="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              Preview Ingestion (<span aria-label={`${previewEvents.length} trips ready to import`}>{previewEvents.length} trips</span>)
             </h3>
             <div className="flex gap-2">
               <button
@@ -248,5 +254,6 @@ export function TakeoutParser() {
         </div>
       )}
     </div>
+    </section>
   );
 }

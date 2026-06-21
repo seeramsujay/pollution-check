@@ -93,16 +93,17 @@ export function FinancialParser() {
   };
 
   return (
-    <div className="bg-surface-elevated border border-border-subtle rounded-xl p-6 transition-all duration-300">
-      <div className="flex items-center justify-between mb-4">
-        <div>
+    <section aria-label="Financial statement carbon auditor">
+      <div className="bg-surface-elevated border border-border-subtle rounded-xl p-6 transition-all duration-300">
+        <div className="flex items-center justify-between mb-4">
+          <div>
           <h2 className="font-headline-md text-headline-md text-primary flex items-center gap-2 font-bold">
             <span className="p-1.5 rounded-lg bg-secondary-container/10 text-secondary-fixed-dim" aria-hidden="true">
               <span className="material-symbols-outlined text-[20px]">account_balance_wallet</span>
             </span>
             Financial Statement Auditor
           </h2>
-          <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">
+          <p id="csv-format-hint" className="font-body-sm text-body-sm text-on-surface-variant mt-1">
             Perform spend-based carbon auditing from local bank statement CSV files.
           </p>
         </div>
@@ -121,6 +122,7 @@ export function FinancialParser() {
         tabIndex={0}
         role="button"
         aria-label="Upload financial bank statements in CSV format"
+        aria-describedby="csv-format-hint csv-required-headers"
         className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
           dragActive
             ? 'border-primary bg-primary/5'
@@ -145,7 +147,7 @@ export function FinancialParser() {
             <p className="font-label-md text-label-md font-semibold text-on-surface">
               Drag & drop CSV or <span className="text-primary underline hover:text-primary-fixed-dim">browse</span>
             </p>
-            <p className="font-label-sm text-[10px] text-on-surface-variant mt-1">
+            <p id="csv-required-headers" className="font-label-sm text-[10px] text-on-surface-variant mt-1">
               Must include headers: <code className="text-primary bg-surface-container-highest px-1 py-0.5 rounded">date</code>, <code className="text-primary bg-surface-container-highest px-1 py-0.5 rounded">description</code>, <code className="text-primary bg-surface-container-highest px-1 py-0.5 rounded">amount</code>
             </p>
           </div>
@@ -161,8 +163,12 @@ export function FinancialParser() {
       {previewEvents.length > 0 && (
         <div className="mt-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
-              Preview Ingestion ({previewEvents.length} items)
+            <h3
+              className="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              Preview Ingestion (<span aria-label={`${previewEvents.length} transactions ready to import`}>{previewEvents.length} items</span>)
             </h3>
             <div className="flex gap-2">
               <button
@@ -216,6 +222,7 @@ export function FinancialParser() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </section>
   );
 }

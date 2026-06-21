@@ -103,6 +103,36 @@ pnpm run build
 
 ---
 
+## 🧪 Quality Assurance & Test Coverage
+
+EcoPulse includes a rigorous test suite built on Vitest to guarantee parser accuracy, calculation correctness, and store safety. The suite executes **74 unit tests** covering three major core engines:
+
+1. **Carbon Event Ledger (`src/tests/carbonStore.test.ts`)**
+   * **Calculations**: Verifies mathematical derivations ($rawQuantity \times co2eIntensity$) and rounds outputs to 4 decimal places to prevent floating-point drift.
+   * **Operations**: Validates newest-first event queue sorting, safe deletion of non-existent event IDs, store wipe commands, and budget overflow indicators.
+2. **Bank Statement parser (`src/tests/csvParser.test.ts`)**
+   * **Format Robustness**: Handles CRLF endings, multi-line quoted entries containing commas, blank lines, and incomplete rows.
+   * **Priority Matching**: Asserts that Category Codes (MCC 5411, 5541, 4511, 5812) successfully override text description keywords.
+   * **Fallbacks**: Validates custom intensity factors and ensures random UUID Generation for events conforms strictly to RFC-4122 (UUID v4).
+3. **Location History Parser (`src/tests/takeoutParser.test.ts`)**
+   * **Data Ingestion**: Ignores `placeVisit` coordinates and isolates `activitySegment` blocks. Rejecting signals marked with `LOW` confidence coordinates.
+   * **Travel Footprint**: Tests GWP-AR6 factors across seven transit models. Zeroes out non-combustion activities (WALKING, CYCLING, STILL).
+   * **Injectability**: Supports custom emission registries for sandboxed testing.
+
+---
+
+## ♿ WCAG Accessibility Standards
+
+EcoPulse is optimized to meet high standards of web accessibility (WCAG 2.1 AA compliant) for users relying on assistive technologies:
+
+* **Semantic Structure**: All interface blocks are enclosed in native HTML5 landmark tags (`<section>`, `<article>`, `<header>`) allowing screen readers to quickly scan the page layout.
+* **Dynamic Content Announcements**: Operations that alter the state of the UI—such as the typing indicator, file processing progression, and parsed item lists—utilize ARIA Live regions (`role="status"`, `aria-live="polite"`, `aria-atomic="true"`) to announce state changes.
+* **Form & Input Associations**: Inputs use descriptive labels and `aria-describedby` links pointing to instruction texts. The digital and manual logging inputs are grouped within semantic `<fieldset>` elements complete with visual-hidden `<legend>` prompts for voice and Braille readouts.
+* **Accessible Tables**: Layout data tables employ standard row/column headers linked via explicit `scope` attributes, wrapped in `<figure>` and `<figcaption>` elements for clear contextual explanations.
+* **Visual Adaptations**: Elements avoid CSS display-none for screen-reader-only labels, utilizing Tailwind-compatible `sr-only` styles to deliver descriptive timestamps and ingestion alerts.
+
+---
+
 ## ☁️ Google Cloud Deployment Guide
 
 EcoPulse is dockerized and optimized to run on **Google Cloud Run**, which provides serverless scaling (scaling to zero when inactive for zero baseline cost).

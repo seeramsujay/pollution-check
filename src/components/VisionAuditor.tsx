@@ -157,7 +157,10 @@ export function VisionAuditor() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-border-subtle bg-surface-elevated">
+    <article
+      aria-label="Receipt visual auditor"
+      className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-border-subtle bg-surface-elevated"
+    >
       
       {/* Left panel: Image capture split */}
       <div className="p-8 flex flex-col justify-between min-h-[400px] relative">
@@ -173,11 +176,20 @@ export function VisionAuditor() {
           </p>
         </div>
 
-        {/* Upload Sandbox */}
-        <div className="flex-1 flex flex-col items-center justify-center relative border border-dashed border-outline-variant rounded-xl bg-surface-container/20 p-6 overflow-hidden min-h-[220px]">
+        {/* Upload drop/click sandbox — acts as a file input trigger */}
+        <div
+          className="flex-1 flex flex-col items-center justify-center relative border border-dashed border-outline-variant rounded-xl bg-surface-container/20 p-6 overflow-hidden min-h-[220px]"
+          role="region"
+          aria-label={loading ? 'Scanning receipt image…' : imagePreview ? 'Receipt image preview' : 'Upload a receipt image'}
+          aria-busy={loading}
+        >
           {imagePreview ? (
             <div className="relative w-full h-full min-h-[200px] flex items-center justify-center">
-              <img src={imagePreview} alt="Receipt preview" className="max-h-[240px] rounded object-contain opacity-70" />
+              <img
+                src={imagePreview}
+                alt="Uploaded receipt image being scanned for food items"
+                className="max-h-[240px] rounded object-contain opacity-70"
+              />
               {loading && (
                 <>
                   <div className="animate-scan-line" aria-hidden="true"></div>
@@ -209,7 +221,13 @@ export function VisionAuditor() {
         </div>
 
         {status && (
-          <div className="mt-4 p-3 bg-surface-container border border-border-subtle rounded flex items-center gap-2 text-xs font-label-sm text-on-surface-variant" role="status">
+          // role="status" uses polite aria-live to announce pipeline progress without interrupting
+          <div
+            className="mt-4 p-3 bg-surface-container border border-border-subtle rounded flex items-center gap-2 text-xs font-label-sm text-on-surface-variant"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             {loading && <span className="w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-bounce" aria-hidden="true"></span>}
             <span>{status}</span>
           </div>
@@ -232,32 +250,39 @@ export function VisionAuditor() {
           </div>
 
           {parsedItems.length > 0 ? (
-            <div className="border border-border-subtle rounded-xl overflow-hidden bg-surface-container/20">
-              <table className="w-full font-mono-jet text-left border-collapse">
-                <thead>
-                  <tr className="bg-surface-container text-[11px] text-on-surface-variant border-b border-border-subtle">
-                    <th className="p-3">ITEM</th>
-                    <th className="p-3">CATEGORY</th>
-                    <th className="p-3 text-right">WEIGHT</th>
-                    <th className="p-3 text-right">CO₂e</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border-subtle text-xs">
-                  {parsedItems.map((item, idx) => {
-                    const intensity = VISION_CARBON_DICT[item.category] || 0.5;
-                    const co2e = item.quantity_kg * intensity;
-                    return (
-                      <tr key={idx} className="hover:bg-surface-container/10">
-                        <td className="p-3 text-on-surface font-semibold">{item.item}</td>
-                        <td className="p-3 text-on-surface-variant">{item.category}</td>
-                        <td className="p-3 text-right text-on-surface-variant">{item.quantity_kg.toFixed(2)} kg</td>
-                        <td className="p-3 text-right text-error-flash font-bold">+{co2e.toFixed(2)} kg</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            // figure + figcaption gives screen readers a labelled context for the data table
+            <figure aria-label="Audited grocery line items from scanned receipt">
+              <figcaption className="sr-only">
+                Grocery items detected in the receipt image, with their food categories, weight, and CO2-equivalent emissions.
+              </figcaption>
+              <div className="border border-border-subtle rounded-xl overflow-hidden bg-surface-container/20">
+                <table className="w-full font-mono-jet text-left border-collapse" role="table">
+                  <thead>
+                    <tr className="bg-surface-container text-[11px] text-on-surface-variant border-b border-border-subtle">
+                      {/* scope="col" links each header to its column for screen readers */}
+                      <th scope="col" className="p-3">ITEM</th>
+                      <th scope="col" className="p-3">CATEGORY</th>
+                      <th scope="col" className="p-3 text-right">WEIGHT</th>
+                      <th scope="col" className="p-3 text-right">CO₂e</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border-subtle text-xs">
+                    {parsedItems.map((item, idx) => {
+                      const intensity = VISION_CARBON_DICT[item.category] || 0.5;
+                      const co2e = item.quantity_kg * intensity;
+                      return (
+                        <tr key={idx} className="hover:bg-surface-container/10">
+                          <td className="p-3 text-on-surface font-semibold">{item.item}</td>
+                          <td className="p-3 text-on-surface-variant">{item.category}</td>
+                          <td className="p-3 text-right text-on-surface-variant">{item.quantity_kg.toFixed(2)} kg</td>
+                          <td className="p-3 text-right text-error-flash font-bold">+{co2e.toFixed(2)} kg</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </figure>
           ) : (
             <div className="flex flex-col items-center justify-center text-center py-12 text-on-surface-variant border border-dashed border-border-subtle rounded-xl bg-surface-container/10">
               <span className="material-symbols-outlined text-4xl mb-2" aria-hidden="true">list_alt</span>
@@ -290,6 +315,6 @@ export function VisionAuditor() {
         )}
       </div>
 
-    </div>
+    </article>
   );
 }

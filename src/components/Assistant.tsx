@@ -266,8 +266,11 @@ export function Assistant() {
   };
 
   return (
-    <div className="bg-surface-elevated border border-border-subtle rounded-xl p-6 flex flex-col h-[400px] shadow-2xl relative overflow-hidden">
-      {/* Glow effect */}
+    <section
+      aria-label="EcoPulse AI Carbon Assistant"
+      className="bg-surface-elevated border border-border-subtle rounded-xl p-6 flex flex-col h-[400px] shadow-2xl relative overflow-hidden"
+    >
+      {/* Decorative background glow — hidden from assistive technology */}
       <div className="absolute top-0 left-0 w-32 h-32 bg-primary-fixed-dim/5 rounded-full blur-2xl pointer-events-none"></div>
 
       {/* Header */}
@@ -290,22 +293,33 @@ export function Assistant() {
         className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1 mb-4"
       >
         {messages.map((msg, index) => (
-          <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <div
+            key={index}
+            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            // Convey sender identity and position to screen readers
+            aria-label={`${msg.sender === 'user' ? 'You' : 'EcoPulse Assistant'} — message ${index + 1} of ${messages.length}`}
+          >
             <div className={`max-w-[85%] rounded-lg p-3 text-sm leading-relaxed ${
               msg.sender === 'user'
                 ? 'bg-primary text-on-primary font-medium rounded-tr-none'
                 : 'bg-surface-container border border-border-subtle text-on-surface rounded-tl-none whitespace-pre-line'
             }`}>
               {msg.text}
+              {/* Visually hidden timestamp so screen readers can announce when the message was sent */}
+              <span className="sr-only">
+                {`, sent at ${new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+              </span>
             </div>
           </div>
         ))}
         {isTyping && (
-          <div className="flex justify-start" aria-label="Assistant is typing...">
+          // role="status" ensures this live region is announced immediately
+          <div className="flex justify-start" role="status" aria-label="EcoPulse Assistant is typing a response">
             <div className="bg-surface-container border border-border-subtle text-on-surface-variant rounded-lg rounded-tl-none p-3 text-sm flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-bounce"></span>
-              <span className="w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-bounce [animation-delay:0.2s]"></span>
-              <span className="w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-bounce [animation-delay:0.4s]"></span>
+              {/* Animated dots are purely decorative — hidden from screen readers */}
+              <span className="w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-bounce" aria-hidden="true"></span>
+              <span className="w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-bounce [animation-delay:0.2s]" aria-hidden="true"></span>
+              <span className="w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-bounce [animation-delay:0.4s]" aria-hidden="true"></span>
             </div>
           </div>
         )}
@@ -344,25 +358,37 @@ export function Assistant() {
         </button>
       </div>
 
-      {/* Form Input field */}
-      <form onSubmit={handleSendMessage} className="flex gap-2 border-t border-border-subtle pt-3">
+      {/* Chat message input form */}
+      <form
+        onSubmit={handleSendMessage}
+        className="flex gap-2 border-t border-border-subtle pt-3"
+        aria-label="Send a message to the EcoPulse AI assistant"
+      >
         <input
+          id="assistant-chat-input"
           type="text"
           value={inputText}
           onChange={(e) => setInputText((e.target as HTMLInputElement).value)}
           placeholder="Ask a question about your carbon ledger..."
           className="flex-1 bg-surface-container-lowest border border-border-subtle rounded px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-primary-fixed-dim transition-colors"
-          aria-label="Ask a question about your carbon ledger"
+          aria-label="Type your carbon ledger question here"
+          aria-describedby="assistant-input-hint"
+          autoComplete="off"
         />
+        {/* Visually hidden hint for screen readers describing accepted input types */}
+        <span id="assistant-input-hint" className="sr-only">
+          Ask about your diet, travel, digital usage, budget status, or request an action plan.
+        </span>
         <button
           type="submit"
           disabled={!inputText.trim()}
+          aria-disabled={!inputText.trim()}
           className="bg-primary text-on-primary hover:bg-primary-fixed-dim hover:text-on-primary-fixed-variant px-4 py-2 text-sm font-semibold rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          aria-label="Send message to carbon assistant"
+          aria-label="Send message to the EcoPulse carbon assistant"
         >
           Send
         </button>
       </form>
-    </div>
+    </section>
   );
 }
