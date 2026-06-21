@@ -3,12 +3,22 @@ import { useCarbonStore, type CarbonEvent } from '../store/carbonStore';
 import { parseSemanticMonth } from '../data/parser';
 import { TRANSPORT_EMISSION_FACTORS } from '../constants/carbonEmissions';
 
+/**
+ * TakeoutParser Component
+ * Handles the ingestion of Google Takeout location semantic history logs.
+ * Parses activity segments (driving, transit, flights) client-side.
+ */
 export function TakeoutParser() {
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewEvents, setPreviewEvents] = useState<CarbonEvent[]>([]);
   const addEvent = useCarbonStore((state) => state.addEvent);
 
+  /**
+   * Toggles drag states.
+   * 
+   * @param {DragEvent} e - Drag event.
+   */
   const handleDrag = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -19,10 +29,21 @@ export function TakeoutParser() {
     }
   };
 
+  /**
+   * Formats the activity segment string for display.
+   * 
+   * @param {string} type - Segment type (e.g., IN_PASSENGER_VEHICLE).
+   * @returns {string} Clean formatted text (e.g., PASSENGER VEHICLE).
+   */
   const formatActivityType = (type: string) => {
     return type.replace(/^IN_/, '').replace(/_/g, ' ');
   };
 
+  /**
+   * Processes the JSON location history file and creates carbon events.
+   * 
+   * @param {File} file - Semantic history JSON file.
+   */
   const processFile = async (file: File) => {
     setError(null);
     setPreviewEvents([]);
@@ -72,6 +93,9 @@ export function TakeoutParser() {
     }
   };
 
+  /**
+   * Handles dropping location files on the drag area.
+   */
   const handleDrop = async (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -82,6 +106,9 @@ export function TakeoutParser() {
     }
   };
 
+  /**
+   * Handles selecting files through the file picker.
+   */
   const handleChange = async (e: Event) => {
     const target = e.target as HTMLInputElement;
     if (target.files && target.files[0]) {
@@ -89,6 +116,9 @@ export function TakeoutParser() {
     }
   };
 
+  /**
+   * Commits the parsed location trip events to the ledger.
+   */
   const handleImport = () => {
     previewEvents.forEach((evt) => {
       addEvent(evt);
@@ -101,7 +131,7 @@ export function TakeoutParser() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="font-headline-md text-headline-md text-primary flex items-center gap-2 font-bold">
-            <span className="p-1.5 rounded-lg bg-primary/10 text-primary-fixed-dim">
+            <span className="p-1.5 rounded-lg bg-primary/10 text-primary-fixed-dim" aria-hidden="true">
               <span className="material-symbols-outlined text-[20px]">explore</span>
             </span>
             Google Takeout Location Auditor
@@ -117,6 +147,14 @@ export function TakeoutParser() {
         onDragOver={handleDrag}
         onDragLeave={handleDrag}
         onDrop={handleDrop}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            document.getElementById('takeout-upload-input')?.click();
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label="Upload Google Takeout location semantic monthly history in JSON format"
         className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
           dragActive
             ? 'border-primary bg-primary/5'
@@ -134,7 +172,7 @@ export function TakeoutParser() {
           htmlFor="takeout-upload-input"
           className="cursor-pointer flex flex-col items-center justify-center gap-3"
         >
-          <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center border border-border-subtle text-primary-fixed-dim text-lg shadow-inner">
+          <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center border border-border-subtle text-primary-fixed-dim text-lg shadow-inner" aria-hidden="true">
             <span className="material-symbols-outlined">map</span>
           </div>
           <div>
@@ -149,8 +187,8 @@ export function TakeoutParser() {
       </div>
 
       {error && (
-        <div className="mt-4 p-3.5 bg-error-container/10 border border-error/20 rounded-xl text-error-fixed-dim text-xs flex items-center gap-2">
-          <span className="material-symbols-outlined text-[16px]">warning</span> {error}
+        <div className="mt-4 p-3.5 bg-error-container/10 border border-error/20 rounded-xl text-error-fixed-dim text-xs flex items-center gap-2" role="alert">
+          <span className="material-symbols-outlined text-[16px]" aria-hidden="true">warning</span> {error}
         </div>
       )}
 
@@ -164,21 +202,31 @@ export function TakeoutParser() {
               <button
                 onClick={() => setPreviewEvents([])}
                 className="px-3 py-1.5 rounded text-xs font-medium text-on-surface-variant hover:text-primary bg-transparent border border-transparent transition-all cursor-pointer"
+                aria-label="Cancel carbon ledger import"
               >
                 Clear
               </button>
               <button
                 onClick={handleImport}
                 className="px-4 py-1.5 rounded text-xs font-bold text-surface-base bg-primary hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                aria-label="Commit parsed trips to ledger"
               >
                 Commit to Ledger
               </button>
             </div>
           </div>
 
-          <div className="max-h-48 overflow-y-auto border border-border-subtle rounded-xl bg-surface-container/20 divide-y divide-border-subtle custom-scrollbar">
+          <div 
+            role="list"
+            aria-label="Parsed trips preview"
+            className="max-h-48 overflow-y-auto border border-border-subtle rounded-xl bg-surface-container/20 divide-y divide-border-subtle custom-scrollbar"
+          >
             {previewEvents.map((event) => (
-              <div key={event.id} className="p-3 flex items-center justify-between text-xs hover:bg-surface-container/30 transition-colors font-mono-jet">
+              <div 
+                key={event.id} 
+                role="listitem"
+                className="p-3 flex items-center justify-between text-xs hover:bg-surface-container/30 transition-colors font-mono-jet"
+              >
                 <div className="flex flex-col gap-0.5">
                   <span className="font-medium text-on-surface">
                     {event.description}

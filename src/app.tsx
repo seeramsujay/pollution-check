@@ -6,6 +6,10 @@ import { VisionAuditor } from './components/VisionAuditor';
 import { DigitalTracker } from './components/DigitalTracker';
 import { Assistant } from './components/Assistant';
 
+/**
+ * The main EcoPulse Application component.
+ * Manages view routing, dark mode state, carbon budget summaries, and category grouping.
+ */
 export function App() {
   const events = useCarbonStore((state) => state.events);
   const dailyBudget = useCarbonStore((state) => state.dailyBudget);
@@ -13,14 +17,21 @@ export function App() {
   const clearStore = useCarbonStore((state) => state.clearStore);
   const getDailyTotal = useCarbonStore((state) => state.getDailyTotal);
 
+  // Active view states
   const [activeView, setActiveView] = useState<'overview' | 'upload' | 'receipt-parser' | 'history'>('overview');
   const [activeUploader, setActiveUploader] = useState<'none' | 'location' | 'bank' | 'digital'>('none');
   const [darkMode, setDarkMode] = useState(true);
 
+  // Carbon budget calculations
   const spentToday = getDailyTotal();
   const percentUsed = Math.min(100, (spentToday / dailyBudget) * 100);
 
-  // Group emissions by categories
+  /**
+   * Group and summarize daily emissions by categories (Travel, Food, Finance, Other).
+   * Filter and aggregate events that occurred today.
+   * 
+   * @returns {{ travel: number, food: number, finance: number, other: number }}
+   */
   const getCategorySums = () => {
     let travel = 0;
     let food = 0;
@@ -33,6 +44,7 @@ export function App() {
       if (!isToday) return;
 
       const cat = evt.category.toLowerCase();
+      // Categorize events based on their category string or source type
       if (['transport', 'transport (fuel)', 'ride sharing', 'aviation travel', 'travel'].includes(cat)) {
         travel += evt.totalCo2e;
       } else if (['groceries', 'dining out', 'beef', 'lamb', 'cheese', 'pork', 'poultry', 'rice', 'avocados', 'bread', 'peas', 'milk', 'vegetables', 'food'].includes(cat)) {
@@ -54,10 +66,14 @@ export function App() {
   const foodPercent = totalCategoryEmissions > 0 ? Math.round((food / totalCategoryEmissions) * 100) : 47;
   const financePercent = totalCategoryEmissions > 0 ? Math.round((finance / totalCategoryEmissions) * 100) : 19;
 
+  /**
+   * Seed the carbon ledger with realistic demonstration data representing various sources.
+   * Clears the current store before inserting.
+   */
   const loadSampleData = () => {
     clearStore();
 
-    // Trader Joes Transaction
+    // 1. Trader Joe's Transaction (Financial Source)
     addEvent({
       id: crypto.randomUUID(),
       timestamp: Date.now() - 3600000 * 1.5,
@@ -70,7 +86,7 @@ export function App() {
       metadata: { merchant: 'traderjoes', mcc: '5411' }
     });
 
-    // Train Travel
+    // 2. Train Travel Segment (Digital Source from Location Takeout)
     addEvent({
       id: crypto.randomUUID(),
       timestamp: Date.now() - 3600000 * 3,
@@ -83,7 +99,7 @@ export function App() {
       metadata: { apiRoute: 'takeout-parser' }
     });
 
-    // Video Streaming
+    // 3. Video Streaming Activity (Digital Tracker Source)
     addEvent({
       id: crypto.randomUUID(),
       timestamp: Date.now() - 3600000 * 5,
@@ -96,7 +112,7 @@ export function App() {
       metadata: { apiRoute: 'digital-tracker' }
     });
 
-    // Organic Ribeye Steak from Receipt scan
+    // 4. Organic Ribeye Steak (Vision Source from scanned receipt)
     addEvent({
       id: crypto.randomUUID(),
       timestamp: Date.now() - 3600000 * 0.5,
@@ -127,14 +143,19 @@ export function App() {
         <div 
           onClick={() => setActiveView('overview')}
           className="font-serif text-[22px] font-bold text-primary cursor-pointer hover:opacity-95 flex items-center gap-2"
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && setActiveView('overview')}
+          aria-label="EcoPulse Home Dashboard"
         >
-          <span className="text-xl">⚡</span>
+          <span className="text-xl" aria-hidden="true">⚡</span>
           <span>EcoPulse</span>
         </div>
-        <nav className="hidden md:flex gap-8 items-center">
+        <nav className="hidden md:flex gap-8 items-center" aria-label="Main Navigation">
           <button 
             onClick={() => setActiveView('history')}
             className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
+            aria-current={activeView === 'history' ? 'page' : undefined}
           >
             Sustainability Reports
           </button>
@@ -145,21 +166,24 @@ export function App() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => setDarkMode(!darkMode)}
-            className="text-primary hover:text-primary-fixed-dim bg-transparent border-none cursor-pointer p-1"
+            className="text-primary hover:text-primary-fixed-dim bg-transparent border-none cursor-pointer p-1 flex items-center justify-center"
             title="Toggle theme"
+            aria-label="Toggle light or dark theme"
           >
-            <span className="material-symbols-outlined">{darkMode ? 'light_mode' : 'dark_mode'}</span>
+            <span className="material-symbols-outlined" aria-hidden="true">{darkMode ? 'light_mode' : 'dark_mode'}</span>
           </button>
           <div className="flex gap-2">
             <button
               onClick={loadSampleData}
               className="px-3 py-1 bg-surface-container hover:bg-surface-container-high border border-border-subtle rounded text-xs text-primary font-label-sm cursor-pointer transition-colors"
+              aria-label="Load demo carbon ledger data"
             >
               📥 Demo Data
             </button>
             <button
               onClick={clearStore}
               className="px-3 py-1 bg-error-container/10 hover:bg-error-container/20 border border-error/20 rounded text-xs text-error font-label-sm cursor-pointer transition-colors"
+              aria-label="Reset all carbon ledger entries"
             >
               Reset
             </button>
@@ -171,10 +195,10 @@ export function App() {
       <div className="flex flex-1 pt-16">
         
         {/* Desktop Left Side Navigation */}
-        <aside className="fixed left-0 top-16 bottom-0 flex flex-col py-6 z-40 glass-panel border-r border-border-subtle w-[240px] hidden md:flex">
+        <aside className="fixed left-0 top-16 bottom-0 flex flex-col py-6 z-40 glass-panel border-r border-border-subtle w-[240px] hidden md:flex" aria-label="Sidebar Navigation">
           <div className="px-6 mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-full border-2 border-primary-fixed-dim bg-surface-container-high flex items-center justify-center font-bold text-primary">
+              <div className="w-10 h-10 rounded-full border-2 border-primary-fixed-dim bg-surface-container-high flex items-center justify-center font-bold text-primary" aria-hidden="true">
                 EP
               </div>
               <div>
@@ -191,8 +215,9 @@ export function App() {
                   ? 'text-primary bg-surface-container-high border-r-2 border-primary scale-[0.98]' 
                   : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
               }`}
+              aria-current={activeView === 'overview' ? 'page' : undefined}
             >
-              <span className="material-symbols-outlined">dashboard</span>
+              <span className="material-symbols-outlined" aria-hidden="true">dashboard</span>
               <span className="font-label-md text-label-md">Overview</span>
             </button>
             <button 
@@ -202,8 +227,9 @@ export function App() {
                   ? 'text-primary bg-surface-container-high border-r-2 border-primary scale-[0.98]' 
                   : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
               }`}
+              aria-current={activeView === 'upload' ? 'page' : undefined}
             >
-              <span className="material-symbols-outlined">publish</span>
+              <span className="material-symbols-outlined" aria-hidden="true">publish</span>
               <span className="font-label-md text-label-md">Ingest & Upload</span>
             </button>
             <button 
@@ -213,8 +239,9 @@ export function App() {
                   ? 'text-primary bg-surface-container-high border-r-2 border-primary scale-[0.98]' 
                   : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
               }`}
+              aria-current={activeView === 'receipt-parser' ? 'page' : undefined}
             >
-              <span className="material-symbols-outlined">receipt_long</span>
+              <span className="material-symbols-outlined" aria-hidden="true">receipt_long</span>
               <span className="font-label-md text-label-md">Receipt Auditor</span>
             </button>
             <button 
@@ -224,15 +251,17 @@ export function App() {
                   ? 'text-primary bg-surface-container-high border-r-2 border-primary scale-[0.98]' 
                   : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
               }`}
+              aria-current={activeView === 'history' ? 'page' : undefined}
             >
-              <span className="material-symbols-outlined">history</span>
+              <span className="material-symbols-outlined" aria-hidden="true">history</span>
               <span className="font-label-md text-label-md">Year in Review</span>
             </button>
           </div>
           <div className="px-6 mt-auto">
             <button 
               onClick={() => setActiveView('history')}
-              className="w-full py-3 bg-primary text-on-primary-container font-label-md text-label-md rounded hover:opacity-90 transition-all font-bold cursor-pointer"
+              className="w-full py-3 bg-primary text-on-primary font-label-md text-label-md rounded hover:opacity-90 transition-all font-bold cursor-pointer"
+              aria-label="Generate sustainability report"
             >
               Generate Report
             </button>

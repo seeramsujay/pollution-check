@@ -33,10 +33,16 @@ export function Assistant() {
     }
   }, [events]);
 
+  // Autoscroll to bottom on new messages or typing indicator
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
+  /**
+   * Generates a contextual welcome greeting based on the carbon ledger's current status.
+   * 
+   * @returns {string} Context-aware greeting message.
+   */
   const getContextualWelcomeText = () => {
     let msg = `Welcome to your EcoPulse Carbon Assistant. I am auditing your live local ledger in real-time. `;
     
@@ -55,12 +61,17 @@ export function Assistant() {
     return msg + `Today's intensity is at ${spentToday.toFixed(2)} kg CO2e, utilizing ${( (spentToday / dailyBudget) * 100 ).toFixed(1)}% of your daily cap. I have calculated some optimization paths based on your inputs. What would you like to target?`;
   };
 
+  /**
+   * Analyzes the carbon ledger context and returns a tailored assistant response
+   * based on query keywords.
+   * 
+   * @param {string} userQuery - The input query from the user.
+   * @returns {string} Markdown-formatted recommendations.
+   */
   const getAssistantResponse = (userQuery: string): string => {
     const query = userQuery.toLowerCase();
-    
 
-
-    // Find the highest emission event
+    // Find the highest emission event for contextual lookup
     const sortedEvents = [...events].sort((a, b) => b.totalCo2e - a.totalCo2e);
     const topEvent = sortedEvents[0];
 
@@ -150,19 +161,19 @@ export function Assistant() {
       let plan = "### EcoPulse Environmental Action Plan 🌿\n\n";
       let stepNum = 1;
 
-      // Check food
+      // Check food inputs
       const beefItems = events.filter(e => e.category.toLowerCase() === 'beef' || e.description.toLowerCase().includes('beef') || e.description.toLowerCase().includes('steak'));
       if (beefItems.length > 0) {
         plan += `${stepNum++}. **Swap Beef**: Substitute your logged beef with plant proteins or poultry. Doing this saves ~11.5 kg CO2e per meal.\n`;
       }
 
-      // Check travel
+      // Check travel inputs
       const carItems = events.filter(e => e.description.toLowerCase().includes('drive') || e.description.toLowerCase().includes('car') || e.description.toLowerCase().includes('uber'));
       if (carItems.length > 0) {
         plan += `${stepNum++}. **Active Mobility**: Swap car journeys under 3km for walking or micro-mobility (biking/scooters) to save ~0.24 kg CO2e/km.\n`;
       }
 
-      // Check digital
+      // Check digital inputs
       const streamItems = events.filter(e => e.description.toLowerCase().includes('stream') || e.description.toLowerCase().includes('video') || e.description.toLowerCase().includes('4k'));
       if (streamItems.length > 0) {
         plan += `${stepNum++}. **HD vs 4K**: Configure your streaming services to default to 1080p rather than 4K to decrease data routing emissions by 60%.\n`;
@@ -189,6 +200,11 @@ export function Assistant() {
     return "Ask me about your ledger, for example: 'Explain my food emissions', 'How can I reduce my travel footprint?', or 'Give me an action plan'. I operate local-first to guarantee data privacy.";
   };
 
+  /**
+   * Handles submission of user query, updates chat state, and simulates response latency.
+   * 
+   * @param {Event} [e] - Optional form submit event.
+   */
   const handleSendMessage = (e?: Event) => {
     e?.preventDefault();
     if (!inputText.trim()) return;
@@ -218,9 +234,13 @@ export function Assistant() {
     }, 600);
   };
 
+  /**
+   * Triggers a query immediately via quick suggestion buttons.
+   * 
+   * @param {string} question - Predefined question string.
+   */
   const handleQuickQuestion = (question: string) => {
     setInputText(question);
-    // Submit immediately
     const userMsg: Message = {
       sender: 'user',
       text: question,
@@ -253,7 +273,7 @@ export function Assistant() {
       {/* Header */}
       <div className="flex items-center justify-between pb-4 border-b border-border-subtle mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-2.5 h-2.5 rounded-full bg-success-neon animate-pulse-dot"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-success-neon animate-pulse-dot" aria-hidden="true"></div>
           <div>
             <h3 className="font-headline-md text-[16px] font-bold text-primary">EcoPulse AI Assistant</h3>
             <p className="font-label-sm text-[10px] text-on-surface-variant">Real-time local context analyzer</p>
@@ -262,13 +282,18 @@ export function Assistant() {
         <span className="font-label-sm text-[10px] bg-surface-container px-2 py-1 rounded text-primary border border-outline-variant">Local Compute</span>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1 mb-4">
+      {/* Messages Log for Screen Readers */}
+      <div 
+        role="log" 
+        aria-live="polite" 
+        aria-label="Chat message history"
+        className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1 mb-4"
+      >
         {messages.map((msg, index) => (
           <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] rounded-lg p-3 text-xs leading-relaxed ${
+            <div className={`max-w-[85%] rounded-lg p-3 text-sm leading-relaxed ${
               msg.sender === 'user'
-                ? 'bg-primary text-on-primary-fixed font-medium rounded-tr-none'
+                ? 'bg-primary text-on-primary font-medium rounded-tr-none'
                 : 'bg-surface-container border border-border-subtle text-on-surface rounded-tl-none whitespace-pre-line'
             }`}>
               {msg.text}
@@ -276,8 +301,8 @@ export function Assistant() {
           </div>
         ))}
         {isTyping && (
-          <div className="flex justify-start">
-            <div className="bg-surface-container border border-border-subtle text-on-surface-variant rounded-lg rounded-tl-none p-3 text-xs flex items-center gap-1.5">
+          <div className="flex justify-start" aria-label="Assistant is typing...">
+            <div className="bg-surface-container border border-border-subtle text-on-surface-variant rounded-lg rounded-tl-none p-3 text-sm flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-bounce"></span>
               <span className="w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-bounce [animation-delay:0.2s]"></span>
               <span className="w-1.5 h-1.5 bg-primary-fixed-dim rounded-full animate-bounce [animation-delay:0.4s]"></span>
@@ -287,47 +312,53 @@ export function Assistant() {
         <div ref={chatEndRef} />
       </div>
 
-      {/* Quick Questions */}
-      <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-3 text-[11px] whitespace-nowrap">
+      {/* Quick Questions suggestion bank */}
+      <div 
+        role="group" 
+        aria-label="Quick carbon ledger questions"
+        className="flex gap-2 overflow-x-auto custom-scrollbar pb-3 text-xs whitespace-nowrap"
+      >
         <button 
           onClick={() => handleQuickQuestion("Show my daily carbon status")}
-          className="px-3 py-1 bg-surface-container hover:bg-surface-container-high border border-border-subtle text-on-surface hover:text-primary transition-all rounded"
+          className="px-3 py-1 bg-surface-container hover:bg-surface-container-high border border-border-subtle text-on-surface hover:text-primary transition-all rounded cursor-pointer"
         >
           📊 Daily Status
         </button>
         <button 
           onClick={() => handleQuickQuestion("How can I reduce my food footprint?")}
-          className="px-3 py-1 bg-surface-container hover:bg-surface-container-high border border-border-subtle text-on-surface hover:text-primary transition-all rounded"
+          className="px-3 py-1 bg-surface-container hover:bg-surface-container-high border border-border-subtle text-on-surface hover:text-primary transition-all rounded cursor-pointer"
         >
           🥑 Diet Auditing
         </button>
         <button 
           onClick={() => handleQuickQuestion("Explain my travel emissions")}
-          className="px-3 py-1 bg-surface-container hover:bg-surface-container-high border border-border-subtle text-on-surface hover:text-primary transition-all rounded"
+          className="px-3 py-1 bg-surface-container hover:bg-surface-container-high border border-border-subtle text-on-surface hover:text-primary transition-all rounded cursor-pointer"
         >
           🚗 Travel Insights
         </button>
         <button 
           onClick={() => handleQuickQuestion("Give me a daily action plan")}
-          className="px-3 py-1 bg-surface-container hover:bg-surface-container-high border border-border-subtle text-on-surface hover:text-primary transition-all rounded"
+          className="px-3 py-1 bg-surface-container hover:bg-surface-container-high border border-border-subtle text-on-surface hover:text-primary transition-all rounded cursor-pointer"
         >
           📋 Get Action Plan
         </button>
       </div>
 
-      {/* Input */}
+      {/* Form Input field */}
       <form onSubmit={handleSendMessage} className="flex gap-2 border-t border-border-subtle pt-3">
         <input
           type="text"
           value={inputText}
           onChange={(e) => setInputText((e.target as HTMLInputElement).value)}
           placeholder="Ask a question about your carbon ledger..."
-          className="flex-1 bg-surface-container-lowest border border-border-subtle rounded px-3 py-2 text-xs text-on-surface focus:outline-none focus:border-primary-fixed-dim transition-colors"
+          className="flex-1 bg-surface-container-lowest border border-border-subtle rounded px-3 py-2 text-sm text-on-surface focus:outline-none focus:border-primary-fixed-dim transition-colors"
+          aria-label="Ask a question about your carbon ledger"
         />
         <button
           type="submit"
           disabled={!inputText.trim()}
-          className="bg-primary text-on-primary-fixed hover:bg-primary-fixed-dim hover:text-on-primary-fixed-variant px-4 py-2 text-xs font-semibold rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-primary text-on-primary hover:bg-primary-fixed-dim hover:text-on-primary-fixed-variant px-4 py-2 text-sm font-semibold rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          aria-label="Send message to carbon assistant"
         >
           Send
         </button>

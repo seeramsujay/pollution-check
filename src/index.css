@@ -1,6 +1,13 @@
 @import "tailwindcss";
 
 @theme {
+  /* Layout Spacing Constants */
+  --spacing-gutter-desktop: 24px;
+  --spacing-margin-desktop: 48px;
+  --spacing-gutter-mobile: 16px;
+  --spacing-margin-mobile: 20px;
+  --spacing-container-max: 1440px;
+
   /* Warm Light Mode Theme (optimistic, clean, sustainable green and cream) */
   --color-surface: #FCFAF2;
   --color-surface-dim: #F5F2E6;
