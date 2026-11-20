@@ -1,8 +1,22 @@
-# ⚡ EcoPulse
+<div align="center">
 
-**Universal Carbon Auditor — Private, Automated, High-Performance.**
+<img src="assets/logo.svg" alt="EcoPulse Logo" width="160" />
 
-🔗 **Live Demo:** [https://pollution-check-site-453397284615.us-central1.run.app](https://pollution-check-site-453397284615.us-central1.run.app)
+# EcoPulse
+### Universal Zero-Knowledge Carbon Footprint Audit Ledger & Lifestyle Impact Engine
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Live Site](https://img.shields.io/badge/Google%20Cloud%20Run-Live%20Demo-4285F4?style=flat&logo=googlecloud)](https://pollution-check-site-453397284615.us-central1.run.app)
+[![Privacy: Zero--Cloud](https://img.shields.io/badge/Privacy-100%25%20Local--First-success.svg)](#)
+[![Standards: IPCC AR6](https://img.shields.io/badge/Standards-IPCC%20GWP--AR6-orange.svg)](#)
+
+<p align="center">
+  <b>A client-side, zero-knowledge carbon footprint audit platform that parses Google Location History, bank statements, and lifestyle receipts locally to calculate personal emissions against a 15kg daily CO2e target.</b>
+</p>
+
+</div>
+
+---
 
 EcoPulse is a Progressive Web App (PWA) carbon auditing platform designed to automate environmental footprint tracking with zero user friction and absolute data privacy. It parses Google Location History exports, bank statement CSVs, and receipt photos locally in the browser, ledgering them against a **15kg daily CO2e budget** representing the global target for climate stabilization.
 
